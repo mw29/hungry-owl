@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scan_app/screens/scan_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,9 +26,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Food Scanner'),
-      ),
       body: Center(
         child: ElevatedButton(
           onPressed: () {
@@ -38,27 +36,6 @@ class HomePage extends StatelessWidget {
           },
           child: const Text('Scan Food'),
         ),
-      ),
-    );
-  }
-}
-
-class ScanPage extends StatefulWidget {
-  const ScanPage({super.key});
-
-  @override
-  State<ScanPage> createState() => _ScanPageState();
-}
-
-class _ScanPageState extends State<ScanPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scan Food'),
-      ),
-      body: const Center(
-        child: Text('Camera Preview Will Be Here'),
       ),
     );
   }
