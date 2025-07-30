@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scan_app/screens/food_data.dart';
+import 'package:scan_app/screens/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,34 +12,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Food Scanner',
-      theme: ThemeData(
+         theme: ThemeData(
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: AppBarTheme(backgroundColor: Colors.white)
       ),
-      home: const ScanPage(),
-    );
-  }
-}
-
-class ScanPage extends StatelessWidget {
-  const ScanPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scan Food'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FoodData()),
-            );
-          },
-          child: const Text('Take Picture'),
-        ),
-      ),
+      home: const HomePage(),
     );
   }
 }
