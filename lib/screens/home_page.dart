@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   CameraController? _controller;
   List<CameraDescription>? _cameras;
+  FlashMode _flashMode = FlashMode.off;
 
   bool _isLoading = false;
   bool _hasPermission = false;
@@ -49,6 +50,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );
 
       await _controller!.initialize();
+      await _controller!.setFlashMode(_flashMode);
 
       setState(() {
         _hasPermission = true;
@@ -71,32 +73,52 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  void _toggleFlash() {
+    setState(() {
+      if (_flashMode == FlashMode.off) {
+        _flashMode = FlashMode.torch;
+      } else {
+        _flashMode = FlashMode.off;
+      }
+      _controller!.setFlashMode(_flashMode);
+    });
+  }
+
+  Future<void> _takePicture() async {
+    if (!_controller!.value.isInitialized) {
+      return;
+    }
+    try {
+      final XFile file = await _controller!.takePicture();
+      // For now, just print the path.
+      // In a real app, you would navigate to a new screen to display the image.
+      print('Picture saved to ${file.path}');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const FoodData()),
+      );
+    } catch (e) {
+      debugPrint("Error taking picture: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Scan App")),
+      appBar: AppBar(
+        title: const Text("Scan App"),
+        actions: [
+          if (_hasPermission)
+            IconButton(
+              icon: Icon(_flashMode == FlashMode.torch ? Icons.flash_on : Icons.flash_off),
+              onPressed: _toggleFlash,
+            ),
+        ],
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _hasPermission
-              ? Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    CameraPreview(_controller!),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const FoodData()),
-                          );
-                        },
-                        child: const Text("Scan Food"),
-                      ),
-                    ),
-                  ],
-                )
+              ? CameraPreview(_controller!)
               : Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -117,6 +139,13 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ],
                   ),
                 ),
+      floatingActionButton: _hasPermission
+          ? FloatingActionButton(
+              onPressed: _takePicture,
+              child: const Icon(Icons.camera),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
