@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:scan_app/screens/food_data.dart';
+import 'package:scan_app/screens/manual_entry_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -90,8 +91,6 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     try {
       final XFile file = await _controller!.takePicture();
-      // For now, just print the path.
-      // In a real app, you would navigate to a new screen to display the image.
       print('Picture saved to ${file.path}');
       Navigator.push(
         context,
@@ -142,9 +141,37 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   ),
                 ),
       floatingActionButton: _hasPermission
-          ? FloatingActionButton(
-              onPressed: _takePicture,
-              child: const Icon(Icons.camera),
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                FloatingActionButton(
+                  heroTag: 'home_fab',
+                  onPressed: _takePicture,
+                  child: const Icon(Icons.camera),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ManualEntryScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black.withOpacity(0.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text(
+                    'Manual Entry',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

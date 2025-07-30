@@ -4,8 +4,9 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 
 class FoodData extends StatefulWidget {
-  final String imagePath;
-  const FoodData({super.key, required this.imagePath});
+  final String? imagePath;
+  final String? foodName;
+  const FoodData({super.key, this.imagePath, this.foodName});
 
   @override
   _FoodDataState createState() => _FoodDataState();
@@ -56,17 +57,18 @@ class _FoodDataState extends State<FoodData> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.file(File(widget.imagePath)),
-                  const SizedBox(height: 24),
-                  Text(
-                    foodData['food name'].toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      letterSpacing: 1.2,
+                  if (widget.imagePath != null)
+                    Image.file(File(widget.imagePath!)),
+                  if (widget.foodName != null)
+                    Text(
+                      widget.foodName!.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        letterSpacing: 1.2,
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 24),
                   Text(
                     'Potential Symptoms',
