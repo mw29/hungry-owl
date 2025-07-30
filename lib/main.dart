@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scan_app/screens/scan_page.dart';
+import 'package:scan_app/screens/food_data.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,26 +15,29 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: const ScanPage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class ScanPage extends StatelessWidget {
+  const ScanPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Scan Food'),
+      ),
       body: Center(
         child: ElevatedButton(
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ScanPage()),
+              MaterialPageRoute(builder: (context) => const FoodData()),
             );
           },
-          child: const Text('Scan Food'),
+          child: const Text('Take Picture'),
         ),
       ),
     );
