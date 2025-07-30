@@ -13,8 +13,10 @@ dependencies:
   flutter:
     sdk: flutter
   image_picker: ^1.1.2
+  riverpod: ^2.6.1
 
   cupertino_icons: ^1.0.8
+  flutter_riverpod: ^2.6.1
 
 dev_dependencies:
   flutter_test:
