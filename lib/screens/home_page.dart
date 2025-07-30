@@ -95,7 +95,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       print('Picture saved to ${file.path}');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const FoodData()),
+        MaterialPageRoute(
+          builder: (context) => FoodData(imagePath: file.path),
+        ),
       );
     } catch (e) {
       debugPrint("Error taking picture: $e");
