@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:scan_app/screens/food_data.dart';
-import 'package:scan_app/screens/manual_entry_screen.dart';
+import 'package:scan_app/screens/manual_entry.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -128,9 +128,23 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         onPressed: _requestCameraPermissions,
                         child: const Text("Request Camera Permission"),
                       ),
+                      const SizedBox(height: 16),
+                      const Text("or"),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ManualEntryScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text('Enter Food Manually'),
+                      ),
                       if (_errorMessage != null)
                         Padding(
-                          padding: const EdgeInsets.all(20.0),
+                          padding: const EdgeInsets.only(top: 20.0),
                           child: Text(
                             "Error: $_errorMessage",
                             style: const TextStyle(color: Colors.red),
@@ -151,7 +165,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   child: const Icon(Icons.camera),
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
+                TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -160,15 +174,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black.withOpacity(0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
                   child: const Text(
                     'Manual Entry',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.white, backgroundColor: Colors.black54),
                   ),
                 ),
               ],

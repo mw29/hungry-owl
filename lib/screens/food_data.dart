@@ -1,30 +1,66 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+import 'package:google_generative_ai/google_generative_ai.dart';
 
 class FoodData extends StatefulWidget {
   final String? imagePath;
   final String? foodName;
-  const FoodData({super.key, this.imagePath, this.foodName});
+
+  const FoodData({
+    super.key,
+    this.imagePath,
+    this.foodName,
+  });
 
   @override
-  _FoodDataState createState() => _FoodDataState();
+  State<FoodData> createState() => _FoodDataState();
 }
 
 class _FoodDataState extends State<FoodData> {
   late Future<Map<String, dynamic>> _foodData;
+  String? _geminiSummary;
 
   @override
   void initState() {
     super.initState();
-    _foodData = _loadFoodData();
+    _foodData = _loadFoodDataAndQueryGemini();
   }
 
-  Future<Map<String, dynamic>> _loadFoodData() async {
+  Future<Map<String, dynamic>> _loadFoodDataAndQueryGemini() async {
     final String response =
         await rootBundle.loadString('lib/data/grapefruit.json');
-    final data = await json.decode(response);
+    final Map<String, dynamic> data = json.decode(response);
+
+    final symptoms = (data['associated symptoms'] as List)
+        .map((s) => "${s['symptom']}: ${s['reasoning']}")
+        .join('\n');
+
+    final prompt = '''
+Analyze the following food-related symptoms and their possible reasons. 
+Give a brief summary of how this food might impact someone's health:
+
+$symptoms
+''';
+
+    try {
+      final model = GenerativeModel(
+        model: 'models/gemini-2.0-flash',
+        apiKey: dotenv.env['GEMINI_API_KEY']!,
+      );
+
+      final content = [Content.text(prompt)];
+      final response = await model.generateContent(content);
+
+      setState(() {
+        _geminiSummary = response.text?.trim() ?? 'No summary generated.';
+      });
+    } catch (e) {
+      print("Error generating summary: $e");
+    }
+
     return data;
   }
 
@@ -42,13 +78,9 @@ class _FoodDataState extends State<FoodData> {
         future: _foodData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
+            return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             final foodData = snapshot.data!;
             final symptoms = foodData['associated symptoms'] as List;
@@ -60,67 +92,42 @@ class _FoodDataState extends State<FoodData> {
                   if (widget.imagePath != null)
                     Image.file(File(widget.imagePath!)),
                   if (widget.foodName != null)
-                    Text(
-                      widget.foodName!.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Potential Symptoms',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[800],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ...symptoms.map((symptom) {
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 16.0),
-                      elevation: 2.0,
-                      shadowColor: Colors.black12,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              symptom['symptom'],
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              symptom['reasoning'],
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                                height: 1.5,
-                              ),
-                            ),
-                          ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text(
+                        widget.foodName!.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          letterSpacing: 1.2,
                         ),
                       ),
-                    );
-                  }),
+                    ),
+                  if (_geminiSummary != null) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Text(
+                        _geminiSummary!,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             );
           } else {
-            return const Center(
-              child: Text('No data available'),
-            );
+            return const Center(child: Text('No data available'));
           }
         },
       ),
