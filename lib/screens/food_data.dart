@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class FoodData extends StatefulWidget {
@@ -22,11 +22,62 @@ class FoodData extends StatefulWidget {
 class _FoodDataState extends State<FoodData> {
   late Future<Map<String, dynamic>> _foodData;
   String? _geminiSummary;
+  late String foodName;
 
   @override
   void initState() {
     super.initState();
-    _foodData = _loadFoodDataAndQueryGemini();
+    _foodData = _initFoodData();
+  }
+
+  Future<String> _identifyFood() async {
+    if (widget.imagePath == null || widget.imagePath!.isEmpty) {
+      return "Unknown Food";
+    }
+
+    try {
+      final ByteData imageData = await rootBundle.load(widget.imagePath!);
+      final Uint8List imageBytes = imageData.buffer.asUint8List();
+
+      final model = GenerativeModel(
+        model: 'models/gemini-2.0-flash',
+        apiKey: dotenv.env['GEMINI_API_KEY']!,
+      );
+
+      final prompt = '''
+Please identify the main food item in this image. 
+Respond with only the name of the food (e.g., "Apple", "Pizza", "Chicken Breast").
+Use the most common name for the food.
+''';
+
+      
+      final content = [
+        Content.multi([
+          TextPart(prompt),
+          DataPart('image/jpeg', imageBytes), 
+        ])
+      ];
+
+      final response = await model.generateContent(content);
+      
+      String foodName = response.text?.trim() ?? "Unknown Food";
+      
+      return foodName;
+      
+    } catch (e) {
+      print("Error identifying food: $e");
+      return "Unknown Food";
+    }
+  }
+
+  Future<Map<String, dynamic>> _initFoodData() async {
+    final name = widget.foodName ?? await _identifyFood();
+    
+    setState(() {
+      foodName = name;
+    });
+    
+    return await _loadFoodDataAndQueryGemini();
   }
 
   Future<Map<String, dynamic>> _loadFoodDataAndQueryGemini() async {
@@ -37,6 +88,8 @@ class _FoodDataState extends State<FoodData> {
     final symptoms = (data['associated symptoms'] as List)
         .map((s) => "${s['symptom']}: ${s['reasoning']}")
         .join('\n');
+
+    print("symptoms: $symptoms");
 
     final prompt = '''
 Analyze the following food-related symptoms and their possible reasons. 
@@ -82,28 +135,23 @@ $symptoms
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
-            final foodData = snapshot.data!;
-            final symptoms = foodData['associated symptoms'] as List;
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (widget.imagePath != null)
-                    Image.file(File(widget.imagePath!)),
-                  if (widget.foodName != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Text(
-                        widget.foodName!.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          letterSpacing: 1.2,
-                        ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Text(
+                      foodName,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        letterSpacing: 1.2,
                       ),
                     ),
+                  ),
                   if (_geminiSummary != null) ...[
                     const SizedBox(height: 8),
                     Container(
