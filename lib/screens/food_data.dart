@@ -23,6 +23,7 @@ class _FoodDataState extends State<FoodData> {
   late Future<Map<String, dynamic>> _foodData;
   String? _geminiSummary;
   late String foodName;
+  List<String> symptoms = ["constipation", "bloating", "headache"];
 
   @override
   void initState() {
@@ -50,20 +51,18 @@ Respond with only the name of the food (e.g., "Apple", "Pizza", "Chicken Breast"
 Use the most common name for the food.
 ''';
 
-      
       final content = [
         Content.multi([
           TextPart(prompt),
-          DataPart('image/jpeg', imageBytes), 
+          DataPart('image/jpeg', imageBytes),
         ])
       ];
 
       final response = await model.generateContent(content);
-      
+
       String foodName = response.text?.trim() ?? "Unknown Food";
-      
+
       return foodName;
-      
     } catch (e) {
       print("Error identifying food: $e");
       return "Unknown Food";
@@ -72,30 +71,20 @@ Use the most common name for the food.
 
   Future<Map<String, dynamic>> _initFoodData() async {
     final name = widget.foodName ?? await _identifyFood();
-    
+
     setState(() {
       foodName = name;
     });
-    
+
     return await _loadFoodDataAndQueryGemini();
   }
 
   Future<Map<String, dynamic>> _loadFoodDataAndQueryGemini() async {
-    final String response =
-        await rootBundle.loadString('lib/data/grapefruit.json');
-    final Map<String, dynamic> data = json.decode(response);
-
-    final symptoms = (data['associated symptoms'] as List)
-        .map((s) => "${s['symptom']}: ${s['reasoning']}")
-        .join('\n');
-
-    print("symptoms: $symptoms");
+    final symptomsString = symptoms.join(', ');
 
     final prompt = '''
-Analyze the following food-related symptoms and their possible reasons. 
-Give a brief summary of how this food might impact someone's health:
-
-$symptoms
+Analyze how $foodName could be related to the following symptoms: $symptomsString.
+Give a brief summary of how this food might impact someone's health, considering these symptoms.
 ''';
 
     try {
@@ -112,9 +101,12 @@ $symptoms
       });
     } catch (e) {
       print("Error generating summary: $e");
+      setState(() {
+        _geminiSummary = 'Error generating summary.';
+      });
     }
 
-    return data;
+    return {};
   }
 
   @override
