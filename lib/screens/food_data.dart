@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:typed_data';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:scan_app/services/llm_calls.dart';
 
@@ -31,44 +29,6 @@ class _FoodDataState extends State<FoodData> {
     _foodData = _initFoodData();
   }
 
-  Future<String> _identifyFood() async {
-    if (widget.imagePath == null || widget.imagePath!.isEmpty) {
-      return "Unknown Food";
-    }
-
-    try {
-      final ByteData imageData = await rootBundle.load(widget.imagePath!);
-      final Uint8List imageBytes = imageData.buffer.asUint8List();
-
-      final model = GenerativeModel(
-        model: 'models/gemini-2.0-flash',
-        apiKey: dotenv.env['GEMINI_API_KEY']!,
-      );
-
-      final prompt = '''
-Please identify the main food item in this image. 
-Respond with only the name of the food (e.g., "Apple", "Pizza", "Chicken Breast").
-Use the most common name for the food.
-''';
-
-      final content = [
-        Content.multi([
-          TextPart(prompt),
-          DataPart('image/jpeg', imageBytes),
-        ])
-      ];
-
-      final response = await model.generateContent(content);
-
-      String foodName = response.text?.trim() ?? "Unknown Food";
-
-      return foodName;
-    } catch (e) {
-      print("Error identifying food: $e");
-      return "Unknown Food";
-    }
-  }
-
   Future<Map<String, dynamic>> _initFoodData() async {
     final name = widget.foodName ?? await _identifyFood();
 
@@ -76,23 +36,21 @@ Use the most common name for the food.
       foodName = name;
     });
 
-    return await _loadFoodDataAndQueryGemini();
+    return await _identifyTriggers();
   }
 
-  Future<Map<String, dynamic>> _loadFoodDataAndQueryGemini() async {
-    final symptomsString = symptoms.join(', ');
-
-    var data = await transcribeFoodImage(
-        dotenv.env['TEST_IMAGE']!);
+  Future<String> _identifyFood() async {
+    var data = await transcribeFoodImage(dotenv.env['TEST_IMAGE']!);
 
     setState(() {
       foodName = data.name;
     });
 
-    print("FOODNAMER: $foodName");
+    return data.name;
+  }
 
-    // print("LLM RESPONSE: $data");
-
+  Future<Map<String, dynamic>> _identifyTriggers() async {
+    final symptomsString = symptoms.join(', ');
     final prompt = '''
 Analyze how $foodName could be related to the following symptoms: $symptomsString.
 Give a brief summary of how this food might impact someone's health, considering these symptoms.
