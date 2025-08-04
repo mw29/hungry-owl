@@ -10,6 +10,13 @@ class ManualEntryScreen extends StatefulWidget {
 
 class ManualEntryScreenState extends State<ManualEntryScreen> {
   final TextEditingController _foodNameController = TextEditingController();
+  bool _showButton = false;
+
+  @override
+  void dispose() {
+    _foodNameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,21 +33,27 @@ class ManualEntryScreenState extends State<ManualEntryScreen> {
               decoration: const InputDecoration(
                 labelText: 'Food Name',
               ),
+              onChanged: (text) {
+                setState(() {
+                  _showButton = text.isNotEmpty;
+                });
+              },
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FoodData(
-                      foodName: _foodNameController.text,
+            if (_showButton)
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FoodData(
+                        foodName: _foodNameController.text,
+                      ),
                     ),
-                  ),
-                );
-              },
-              child: const Text('Submit'),
-            ),
+                  );
+                },
+                child: const Text('Submit'),
+              ),
           ],
         ),
       ),
