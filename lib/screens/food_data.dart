@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:scan_app/services/llm_calls.dart';
 
 class FoodData extends StatefulWidget {
   final String? imagePath;
@@ -81,6 +81,11 @@ Use the most common name for the food.
 
   Future<Map<String, dynamic>> _loadFoodDataAndQueryGemini() async {
     final symptomsString = symptoms.join(', ');
+
+    var data = await transcribeFoodImage(
+        dotenv.env['TEST_IMAGE']!);
+
+    print("LLM RESPONSE: $data");
 
     final prompt = '''
 Analyze how $foodName could be related to the following symptoms: $symptomsString.
