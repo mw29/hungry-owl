@@ -18,13 +18,29 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   bool _isLoading = false;
   bool _hasPermission = false;
+  bool _noCameras = false;
   String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _requestCameraPermissions();
+    _checkCameraAvailability();
+  }
+
+  Future<void> _checkCameraAvailability() async {
+    try {
+      _cameras = await availableCameras();
+      if (_cameras!.isEmpty) {
+        setState(() {
+          _noCameras = true;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    }
   }
 
   Future<void> _requestCameraPermissions() async {
@@ -34,17 +50,6 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
 
     try {
-      _cameras = await availableCameras();
-
-      if (_cameras!.isEmpty) {
-        setState(() {
-          _hasPermission = false;
-          _errorMessage = "No cameras available";
-          _isLoading = false;
-        });
-        return;
-      }
-
       _controller = CameraController(
         _cameras!.first,
         ResolutionPreset.medium,
@@ -112,7 +117,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         actions: [
           if (_hasPermission)
             IconButton(
-              icon: Icon(_flashMode == FlashMode.torch ? Icons.flash_on : Icons.flash_off),
+              icon: Icon(_flashMode == FlashMode.torch
+                  ? Icons.flash_on
+                  : Icons.flash_off),
               onPressed: _toggleFlash,
             ),
           IconButton(
@@ -136,13 +143,16 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
-                        onPressed: _requestCameraPermissions,
-                        child: const Text("Request Camera Permission"),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text("or"),
-                      const SizedBox(height: 16),
+                      if (!_noCameras) ...[
+                        ElevatedButton(
+                          onPressed: _requestCameraPermissions,
+                          child: const Text("Request Camera Permission"),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text("or"),
+                        const SizedBox(height: 16),
+                      ],
+                      
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -188,7 +198,8 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   },
                   child: const Text(
                     'Manual Entry',
-                    style: TextStyle(color: Colors.white, backgroundColor: Colors.black54),
+                    style: TextStyle(
+                        color: Colors.white, backgroundColor: Colors.black54),
                   ),
                 ),
               ],
