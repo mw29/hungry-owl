@@ -85,7 +85,13 @@ Use the most common name for the food.
     var data = await transcribeFoodImage(
         dotenv.env['TEST_IMAGE']!);
 
-    print("LLM RESPONSE: $data");
+    setState(() {
+      foodName = data.name;
+    });
+
+    print("FOODNAMER: $foodName");
+
+    // print("LLM RESPONSE: $data");
 
     final prompt = '''
 Analyze how $foodName could be related to the following symptoms: $symptomsString.
