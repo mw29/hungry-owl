@@ -199,7 +199,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   child: const Text(
                     'Manual Entry',
                     style: TextStyle(
-                        color: Colors.white, backgroundColor: Colors.black54),
+                        color: Colors.white, backgroundColor: Colors.black),
                   ),
                 ),
               ],
