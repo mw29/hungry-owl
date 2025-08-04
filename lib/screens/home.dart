@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:scan_app/screens/food_data.dart';
 import 'package:scan_app/screens/manual_entry.dart';
+import 'package:scan_app/screens/profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -114,6 +115,17 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
               icon: Icon(_flashMode == FlashMode.torch ? Icons.flash_on : Icons.flash_off),
               onPressed: _toggleFlash,
             ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: _isLoading
