@@ -19,6 +19,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   google_generative_ai: ^0.4.7
   flutter_dotenv: ^5.2.1
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
