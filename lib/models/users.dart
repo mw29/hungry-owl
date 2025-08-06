@@ -11,11 +11,19 @@ import 'package:scan_app/services/db.dart';
 final userStore = StoreRef<String, Map<String, dynamic>>('user');
 
 final usersProvider = StreamProvider.autoDispose<User?>((ref) {
+  final db = Db().db;
   final controller = StreamController<User?>();
 
-  // User subscription status logic will go here
+  final subscription = userStore.record('user').onSnapshot(db).listen((snapshot) {
+    if (snapshot != null) {
+      controller.add(mapToUser(snapshot.value));
+    } else {
+      controller.add(null);
+    }
+  });
 
   ref.onDispose(() {
+    subscription.cancel();
     controller.close();
   });
 
@@ -30,7 +38,7 @@ User mapToUser(Map data) {
     updatedAt: data['updatedAt'],
     deletedAt: data['deletedAt'],
     version: data['version'],
-    symptoms: data['symptoms'], // this might need to be done differentlY??!?!?1
+    symptoms: List<String>.from(data['symptoms']),
   );
 }
 
@@ -40,8 +48,6 @@ Future<Map<String, dynamic>> createUser() async {
   String uid = Uuid().v4();
 
   try {
-    final MediaQueryData mediaQuery = MediaQueryData.fromView(
-        WidgetsBinding.instance.platformDispatcher.views.first);
     final userData = User(
       id: uid,
       createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -49,7 +55,7 @@ Future<Map<String, dynamic>> createUser() async {
       deletedAt: null,
       anonId: getAnonId(uid),
       version: DateTime.now().millisecondsSinceEpoch,
-      symptoms: ["extreme hunger"],
+      symptoms: ["extreme hunger"].toList(),
     );
     final mapUser = userData.toMap();
     await userStore.record('user').put(Db().db, mapUser);

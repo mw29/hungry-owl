@@ -1,17 +1,21 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scan_app/models/users.dart';
+import 'package:scan_app/providers/user_state.dart';
 import 'package:scan_app/screens/food_data.dart';
 import 'package:scan_app/screens/manual_entry.dart';
 import 'package:scan_app/screens/profile.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  HomePageState createState() => HomePageState();
+  ConsumerState<HomePage> createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class HomePageState extends ConsumerState<HomePage>
+    with WidgetsBindingObserver {
   CameraController? _controller;
   List<CameraDescription>? _cameras;
   FlashMode _flashMode = FlashMode.off;
@@ -26,6 +30,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _checkCameraAvailability();
+    final user = ref.read(usersProvider).value;
   }
 
   Future<void> _checkCameraAvailability() async {
@@ -97,7 +102,6 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     try {
       final XFile file = await _controller!.takePicture();
-      print('Picture saved to ${file.path}');
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -111,6 +115,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(userProvider, (previous, next) {}); // hmm 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Scan App"),
@@ -152,7 +157,6 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         const Text("or"),
                         const SizedBox(height: 16),
                       ],
-                      
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(

@@ -1,38 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scan_app/models/users.dart';
 
-
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreen();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreen extends ConsumerState<ProfileScreen> {
   final _symptomsController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    _loadProfile();
-  }
-
-  Future<void> _loadProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    _symptomsController.text = prefs.getString('symptoms') ?? '';
-  }
-
-  Future<void> _saveProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('symptoms', _symptomsController.text);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profile saved!')),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final currUser = ref.watch(usersProvider).value;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -47,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _saveProfile,
+              onPressed: () => {print('lol')},
               child: const Text('Save'),
             ),
           ],
