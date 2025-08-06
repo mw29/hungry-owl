@@ -44,12 +44,38 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
           children: [
             TextField(
               controller: _symptomsController,
-              decoration: const InputDecoration(labelText: 'Symptoms'),
+              maxLines: null,
+              minLines: 3,
+              decoration: InputDecoration(
+                labelText: 'Symptoms',
+                alignLabelWithHint: true,
+                border: OutlineInputBorder(),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                hintText: 'Enter symptoms separated by commas...',
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // will update user symptoms here
+              onPressed: () async {
+                final symptomsText = _symptomsController.text.trim();
+                try {
+                  await updateUser(updatedData: {
+                    'symptoms':
+                        symptomsText.split(',').map((s) => s.trim()).toList(),
+                  });
+
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('User symptoms updated.')),
+                  );
+                } catch (e) {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Failed to update: ${e.toString()}')),
+                  );
+                }
               },
               child: const Text('Save'),
             ),
