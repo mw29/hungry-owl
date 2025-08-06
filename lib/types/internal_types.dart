@@ -32,7 +32,6 @@ class Document {
 class User extends Document {
   final String anonId;
   final int version;
-  final int userSince;
   final List<String> symptoms;
 
   User({
@@ -42,7 +41,18 @@ class User extends Document {
     required super.deletedAt,
     required this.anonId,
     required this.version,
-    required this.userSince,
     required this.symptoms,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'deletedAt': deletedAt,
+      'anonId': anonId,
+      'version': version,
+      'symptoms': symptoms, // this might also need to be handled differently
+    };
+  }
 }
