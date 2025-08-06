@@ -87,9 +87,6 @@ Give a brief summary of how this food might impact someone\'s health, considerin
       appBar: AppBar(
         title: const Text('Food Details'),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        titleTextStyle: const TextStyle(
-            color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold, backgroundColor: Colors.white),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(

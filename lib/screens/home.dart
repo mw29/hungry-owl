@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scan_app/models/users.dart';
 import 'package:scan_app/providers/user_state.dart';
 import 'package:scan_app/screens/food_data.dart';
 import 'package:scan_app/screens/manual_entry.dart';
