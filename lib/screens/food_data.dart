@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:scan_app/models/users.dart';
 import 'package:scan_app/services/llm_calls.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FoodData extends StatefulWidget {
+class FoodData extends ConsumerStatefulWidget {
   final String? imagePath;
   final String? foodName;
 
@@ -15,10 +17,10 @@ class FoodData extends StatefulWidget {
   });
 
   @override
-  State<FoodData> createState() => _FoodDataState();
+  ConsumerState<FoodData> createState() => _FoodData();
 }
 
-class _FoodDataState extends State<FoodData> {
+class _FoodData extends ConsumerState<FoodData> {
   late Future<Map<String, dynamic>> _foodData;
   String? _geminiSummary;
   late String foodName;
@@ -49,13 +51,10 @@ class _FoodDataState extends State<FoodData> {
     return data.name;
   }
 
-  Future<String> _loadSymptoms() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('symptoms') ?? '';
-  }
-
   Future<Map<String, dynamic>> _identifyTriggers() async {
-    final symptomsString = await _loadSymptoms();
+    final user = ref.read(usersProvider).value;
+    final symptomsList = user?.symptoms ?? [];
+    final symptomsString = symptomsList.join(', ');
     final prompt = '''
 Analyze how $foodName could be related to the following symptoms: $symptomsString.
 Give a brief summary of how this food might impact someone\'s health, considering these symptoms.
@@ -82,7 +81,6 @@ Give a brief summary of how this food might impact someone\'s health, considerin
 
     return {};
   }
-
 
   @override
   Widget build(BuildContext context) {
