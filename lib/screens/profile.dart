@@ -13,8 +13,27 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
   final _symptomsController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currUser = ref.read(usersProvider).value;
+      if (currUser != null) {
+        _symptomsController.text = _formatSymptoms(currUser.symptoms);
+      }
+    });
+  }
+
+  String _formatSymptoms(dynamic symptoms) {
+    if (symptoms is List<String>) {
+      return symptoms.join(', ');
+    } else if (symptoms is String) {
+      return symptoms;
+    }
+    return '';
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final currUser = ref.watch(usersProvider).value;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -29,7 +48,9 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => {print('lol')},
+              onPressed: () {
+                // will update user symptoms here
+              },
               child: const Text('Save'),
             ),
           ],
