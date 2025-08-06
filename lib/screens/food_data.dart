@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:scan_app/models/users.dart';
 import 'package:scan_app/services/llm_calls.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FoodData extends ConsumerStatefulWidget {
   final String? imagePath;

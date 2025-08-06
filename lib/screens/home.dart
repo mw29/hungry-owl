@@ -30,7 +30,6 @@ class HomePageState extends ConsumerState<HomePage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _checkCameraAvailability();
-    final user = ref.read(usersProvider).value;
   }
 
   Future<void> _checkCameraAvailability() async {
