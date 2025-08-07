@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scan_app/models/users.dart';
 import 'package:scan_app/screens/home.dart';
 
 class WelcomeScreen extends ConsumerStatefulWidget {
@@ -15,7 +16,8 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              updateUser(updatedData: {'onboarded': true});
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => const HomePage()),
               );

@@ -54,7 +54,7 @@ class User extends Document {
       'deletedAt': deletedAt,
       'anonId': anonId,
       'version': version,
-      'symptoms': symptoms, // this might also need to be handled differently
+      'symptoms': symptoms,
       'onboarded': onboarded,
     };
   }
