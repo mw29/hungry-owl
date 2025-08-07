@@ -5,6 +5,7 @@ import 'package:scan_app/providers/user_state.dart';
 import 'package:scan_app/screens/food_data.dart';
 import 'package:scan_app/screens/manual_entry.dart';
 import 'package:scan_app/screens/profile.dart';
+import 'package:scan_app/screens/symptom_settings.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -23,6 +24,7 @@ class HomePageState extends ConsumerState<HomePage>
   bool _hasPermission = false;
   bool _noCameras = false;
   String? _errorMessage;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -111,9 +113,59 @@ class HomePageState extends ConsumerState<HomePage>
     }
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  List<Widget> get _pages => [
+        _hasPermission
+            ? CameraPreview(_controller!)
+            : Center(child: _buildPermissionUI()),
+        const SymptomSettings(),
+      ];
+
+  Widget _buildPermissionUI() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (!_noCameras) ...[
+          ElevatedButton(
+            onPressed: _requestCameraPermissions,
+            child: const Text("Request Camera Permission"),
+          ),
+          const SizedBox(height: 16),
+          const Text("or"),
+          const SizedBox(height: 16),
+        ],
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ManualEntryScreen(),
+              ),
+            );
+          },
+          child: const Text('Enter Food Manually'),
+        ),
+        if (_errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Text(
+              "Error: $_errorMessage",
+              style: const TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    ref.listen(userProvider, (previous, next) {}); // hmm 
+    ref.listen(userProvider, (previous, next) {});
     return Scaffold(
       appBar: AppBar(
         title: const Text("Scan App"),
@@ -140,45 +192,11 @@ class HomePageState extends ConsumerState<HomePage>
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _hasPermission
-              ? CameraPreview(_controller!)
-              : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (!_noCameras) ...[
-                        ElevatedButton(
-                          onPressed: _requestCameraPermissions,
-                          child: const Text("Request Camera Permission"),
-                        ),
-                        const SizedBox(height: 16),
-                        const Text("or"),
-                        const SizedBox(height: 16),
-                      ],
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ManualEntryScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text('Enter Food Manually'),
-                      ),
-                      if (_errorMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: Text(
-                            "Error: $_errorMessage",
-                            style: const TextStyle(color: Colors.red),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-      floatingActionButton: _hasPermission
+          : IndexedStack(
+              index: _selectedIndex,
+              children: _pages,
+            ),
+      floatingActionButton: _selectedIndex == 0 && _hasPermission
           ? Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -201,13 +219,25 @@ class HomePageState extends ConsumerState<HomePage>
                   child: const Text(
                     'Manual Entry',
                     style: TextStyle(
-                        color: Colors.white, backgroundColor: Colors.black),
+                      color: Colors.white,
+                      backgroundColor: Colors.black,
+                    ),
                   ),
                 ),
               ],
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings")
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
     );
   }
 }

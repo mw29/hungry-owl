@@ -41,45 +41,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          children: [
-            TextField(
-              controller: _symptomsController,
-              maxLines: null,
-              minLines: 3,
-              decoration: InputDecoration(
-                labelText: 'Symptoms',
-                alignLabelWithHint: true,
-                border: OutlineInputBorder(),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                hintText: 'Enter symptoms separated by commas...',
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                final symptomsText = _symptomsController.text.trim();
-                try {
-                  await updateUser(updatedData: {
-                    'symptoms':
-                        symptomsText.split(',').map((s) => s.trim()).toList(),
-                  });
-
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('User symptoms updated.')),
-                  );
-                } catch (e) {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text('Failed to update: ${e.toString()}')),
-                  );
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
+          children: [Text("PROFILE Settings")],
         ),
       ),
     );
