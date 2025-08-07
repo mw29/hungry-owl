@@ -12,6 +12,21 @@ class SymptomSettings extends ConsumerStatefulWidget {
 class _SymptomSettings extends ConsumerState<SymptomSettings> {
   final _symptomsController = TextEditingController();
   bool _hasSetInitialSymptoms = false;
+  String _initialSymptoms = '';
+  bool _hasChanges = false;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _symptomsController.addListener(() {
+      if (!_hasSetInitialSymptoms) return;
+      final current = _symptomsController.text.trim();
+      setState(() {
+        _hasChanges = current != _initialSymptoms;
+      });
+    });
+  }
 
   String _formatSymptoms(dynamic symptoms) {
     if (symptoms is List<String>) {
@@ -23,19 +38,24 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
   }
 
   @override
+  void dispose() {
+    _symptomsController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final userAsync = ref.watch(usersProvider);
     final currUser = userAsync.value;
 
     if (!_hasSetInitialSymptoms && currUser != null) {
-      _symptomsController.text = _formatSymptoms(currUser.symptoms);
+      final formatted = _formatSymptoms(currUser.symptoms).trim();
+      _symptomsController.text = formatted;
+      _initialSymptoms = formatted;
       _hasSetInitialSymptoms = true;
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -54,34 +74,47 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                FocusScope.of(context).unfocus();
+            if (_hasChanges)
+              ElevatedButton(
+                onPressed: _isSaving
+                    ? null
+                    : () async {
+                        FocusScope.of(context).unfocus();
 
-                final symptomsText = _symptomsController.text.trim();
-                try {
-                  await updateUser(updatedData: {
-                    'symptoms': symptomsText
-                        .split(',')
-                        .map((s) => s.trim())
-                        .where((s) => s.isNotEmpty)
-                        .toList(),
-                  });
+                        final symptomsText = _symptomsController.text.trim();
+                        setState(() => _isSaving = true);
 
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('User symptoms updated.')),
-                  );
-                } catch (e) {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text('Failed to update: ${e.toString()}')),
-                  );
-                }
-              },
-              child: const Text('Save'),
-            ),
+                        try {
+                          await updateUser(updatedData: {
+                            'symptoms': symptomsText
+                                .split(',')
+                                .map((s) => s.trim())
+                                .where((s) => s.isNotEmpty)
+                                .toList(),
+                          });
+
+                          if (!mounted) return;
+
+                          setState(() {
+                            _initialSymptoms = symptomsText;
+                            _hasChanges = false;
+                            _isSaving = false;
+                          });
+                          if (!mounted) return;
+
+                          setState(() => _isSaving = false);
+                        } catch (e) {
+                          if (!mounted) return;
+
+                          setState(() => _isSaving = false);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: ${e.toString()}')),
+                          );
+                        }
+                      },
+                child: const Text('Save'),
+              ),
           ],
         ),
       ),
