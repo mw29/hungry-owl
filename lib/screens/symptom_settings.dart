@@ -104,12 +104,14 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
 
                           setState(() => _isSaving = false);
                         } catch (e) {
-                          if (!mounted) return;
+                          if (!context.mounted) return;
 
                           setState(() => _isSaving = false);
 
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error: ${e.toString()}')),
+                            SnackBar(
+                                content: Text(
+                                    'Failed to save symptoms, please try again!')),
                           );
                         }
                       },
