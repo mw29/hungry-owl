@@ -45,6 +45,17 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(usersProvider, (previous, next) {
+      if (!mounted) return;
+      final user = next.value;
+      if (user != null) {
+        final formatted = _formatSymptoms(user.symptoms).trim();
+        _symptomsController.text = formatted;
+        _initialSymptoms = formatted;
+        _hasSetInitialSymptoms = true;
+      }
+    });
+
     final userAsync = ref.watch(usersProvider);
     final currUser = userAsync.value;
 

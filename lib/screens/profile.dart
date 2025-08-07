@@ -41,7 +41,16 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          children: [Text("PROFILE Settings")],
+          children: [
+            ElevatedButton(
+                onPressed: () async {
+                  await deleteUser();
+                  if (context.mounted) {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  }
+                },
+                child: const Text("Delete Data"))
+          ],
         ),
       ),
     );

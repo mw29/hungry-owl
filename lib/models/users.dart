@@ -14,7 +14,8 @@ final usersProvider = StreamProvider.autoDispose<User?>((ref) {
   final db = Db().db;
   final controller = StreamController<User?>();
 
-  final subscription = userStore.record('user').onSnapshot(db).listen((snapshot) {
+  final subscription =
+      userStore.record('user').onSnapshot(db).listen((snapshot) {
     if (snapshot != null) {
       controller.add(mapToUser(snapshot.value));
     } else {
@@ -90,4 +91,12 @@ Future<String> getUserId() async {
   final userRecord = userStore.record('user');
   final userData = await userRecord.get(Db().db);
   return userData!['id'];
+}
+
+Future<void> deleteUser() async {
+  try {
+    await userStore.record("user").delete(Db().db);
+  } catch (e) {
+    throw Exception('Failed to delete user from database: ${e.toString()}');
+  }
 }
