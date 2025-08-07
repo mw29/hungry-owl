@@ -40,6 +40,7 @@ User mapToUser(Map data) {
     deletedAt: data['deletedAt'],
     version: data['version'],
     symptoms: List<String>.from(data['symptoms']),
+    onboarded: data['onboarded'],
   );
 }
 
@@ -57,6 +58,7 @@ Future<Map<String, dynamic>> createUser() async {
       anonId: getAnonId(uid),
       version: DateTime.now().millisecondsSinceEpoch,
       symptoms: ["extreme hunger"].toList(),
+      onboarded: false,
     );
     final mapUser = userData.toMap();
     await userStore.record('user').put(Db().db, mapUser);

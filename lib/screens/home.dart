@@ -6,6 +6,7 @@ import 'package:scan_app/screens/food_data.dart';
 import 'package:scan_app/screens/manual_entry.dart';
 import 'package:scan_app/screens/profile.dart';
 import 'package:scan_app/screens/symptom_settings.dart';
+import 'package:scan_app/screens/onboarding/welcome.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -165,7 +166,14 @@ class HomePageState extends ConsumerState<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(userProvider, (previous, next) {});
+    ref.listen(userProvider, (previous, next) {
+      final user = next.user;
+      if (user != null && user.onboarded == false) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+        );
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text("Scan App"),
