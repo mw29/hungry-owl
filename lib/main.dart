@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
 
     const primaryColor = Color(0xFF2D6A74);
     const backgroundColor = Color(0xFFF5F5F5);
-    const accentColor = Color(0xFFF4A261);
 
     return MaterialApp(
       title: 'Food Scanner',
@@ -31,7 +30,6 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: backgroundColor,
         colorScheme: const ColorScheme.light(
           primary: primaryColor,
-          secondary: accentColor,
         ),
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,
@@ -53,16 +51,34 @@ class MyApp extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.all(16),
+            textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(
+              color: Colors.white,
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(
+              color: primaryColor,
+              width: 1.5,
+            ),
           ),
           filled: true,
           fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 14.0,
+          ),
         ),
       ),
       home: const HomePage(),
