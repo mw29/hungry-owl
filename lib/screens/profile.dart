@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scan_app/models/users.dart';
+import 'package:scan_app/screens/terms_of_service.dart';
+import 'package:scan_app/screens/privacy_policy.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -49,7 +51,27 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 },
-                child: const Text("Delete Data"))
+                child: const Text("Delete Data")),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const TermsOfServiceScreen()));
+                  },
+                  child: const Text("Terms of Service"),
+                ),
+                Text(" • ", style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20),),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyScreen()));
+                  },
+                  child: const Text("Privacy Policy"),
+                ),
+              ],
+            )
           ],
         ),
       ),
