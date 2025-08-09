@@ -58,17 +58,22 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const TermsOfServiceScreen()));
-                  },
-                  child: const Text("Terms of Service"),
-                ),
-                Text(" • ", style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20),),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const PrivacyPolicyScreen()));
                   },
                   child: const Text("Privacy Policy"),
+                ),
+                Text(
+                  " • ",
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 20),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const TermsOfServiceScreen()));
+                  },
+                  child: const Text("Terms of Service"),
                 ),
               ],
             )
