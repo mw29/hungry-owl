@@ -71,6 +71,16 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
+            const Text(
+              'What are your symptoms?',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'List the symptoms you want to analyze, separate by commas.',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
             TextField(
               controller: _symptomsController,
               maxLines: null,
