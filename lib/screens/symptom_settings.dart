@@ -73,7 +73,7 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
           children: [
             const Text(
               'What are your symptoms?',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             const Text(

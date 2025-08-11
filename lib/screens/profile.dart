@@ -45,11 +45,41 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
         child: ListView(
           children: [
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
                 onPressed: () async {
-                  await deleteUser();
-                  if (context.mounted) {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  }
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Delete Data?'),
+                        content: const Text(
+                            'This action is irreversible and will permanently delete all your data.'),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            child: const Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            child: const Text('Delete'),
+                            onPressed: () async {
+                              await deleteUser();
+                              if (context.mounted) {
+                                Navigator.of(context)
+                                    .popUntil((route) => route.isFirst);
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: const Text("Delete Data")),
             Row(
