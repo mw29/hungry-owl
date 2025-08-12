@@ -56,6 +56,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                         title: const Text('Delete Data?'),
                         content: const Text(
                             'This action is irreversible and will permanently delete all your data.'),
+                        actionsAlignment: MainAxisAlignment.center,
                         actions: <Widget>[
                           ElevatedButton(
                             child: const Text('Cancel'),
