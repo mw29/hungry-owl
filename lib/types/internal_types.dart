@@ -59,3 +59,49 @@ class User extends Document {
     };
   }
 }
+
+class SymptomCorrelation {
+  final String symptom;
+  final String potentialCorrelation;
+
+  SymptomCorrelation({
+    required this.symptom,
+    required this.potentialCorrelation,
+  });
+
+  factory SymptomCorrelation.fromJson(Map<String, dynamic> json) {
+    return SymptomCorrelation(
+      symptom: json['symptom'],
+      potentialCorrelation: json['potentialCorrelation'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'symptom': symptom,
+        'potentialCorrelation': potentialCorrelation,
+      };
+}
+
+class FoodCorrelationResponse {
+  final String foodName;
+  final List<SymptomCorrelation> symptoms;
+
+  FoodCorrelationResponse({
+    required this.foodName,
+    required this.symptoms,
+  });
+
+  factory FoodCorrelationResponse.fromJson(Map<String, dynamic> json) {
+    return FoodCorrelationResponse(
+      foodName: json['foodName'],
+      symptoms: (json['symptoms'] as List<dynamic>)
+          .map((item) => SymptomCorrelation.fromJson(item))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'foodName': foodName,
+        'symptoms': symptoms.map((s) => s.toJson()).toList(),
+      };
+}

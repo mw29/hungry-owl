@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:hungryowl/models/users.dart';
+import 'package:hungryowl/services/generate_response.dart';
 import 'package:hungryowl/services/llm_calls.dart';
+import 'package:hungryowl/types/internal_types.dart';
 
 class FoodData extends ConsumerStatefulWidget {
   final String? imagePath;
@@ -20,8 +21,7 @@ class FoodData extends ConsumerStatefulWidget {
 }
 
 class _FoodData extends ConsumerState<FoodData> {
-  late Future<Map<String, dynamic>> _foodData;
-  String? _geminiSummary;
+  late Future<FoodCorrelationResponse> _foodData;
   late String foodName;
 
   @override
@@ -30,7 +30,7 @@ class _FoodData extends ConsumerState<FoodData> {
     _foodData = _initFoodData();
   }
 
-  Future<Map<String, dynamic>> _initFoodData() async {
+  Future<FoodCorrelationResponse> _initFoodData() async {
     final name = widget.foodName ?? await _identifyFood();
 
     setState(() {
@@ -43,42 +43,15 @@ class _FoodData extends ConsumerState<FoodData> {
   Future<String> _identifyFood() async {
     var data = await transcribeFoodImage(dotenv.env['TEST_IMAGE']!);
 
-    setState(() {
-      foodName = data.name;
-    });
-
     return data.name;
   }
 
-  Future<Map<String, dynamic>> _identifyTriggers() async {
+  Future<FoodCorrelationResponse> _identifyTriggers() async {
     final user = ref.read(usersProvider).value;
     final symptomsList = user?.symptoms ?? [];
-    final symptomsString = symptomsList.join(', ');
-    final prompt = '''
-Analyze how $foodName could be related to the following symptoms: $symptomsString.
-Give a brief summary of how this food might impact someone\'s health, considering these symptoms.
-''';
-
-    try {
-      final model = GenerativeModel(
-        model: 'models/gemini-2.0-flash',
-        apiKey: dotenv.env['GEMINI_API_KEY']!,
-      );
-
-      final content = [Content.text(prompt)];
-      final response = await model.generateContent(content);
-
-      setState(() {
-        _geminiSummary = response.text?.trim() ?? 'No summary generated.';
-      });
-    } catch (e) {
-      print("Error generating summary: $e");
-      setState(() {
-        _geminiSummary = 'Error generating summary.';
-      });
-    }
-
-    return {};
+    final symptomList = symptomsList.join(', ');
+    final response = await generateContent(foodName, symptomList);
+    return response;
   }
 
   @override
@@ -97,7 +70,7 @@ Give a brief summary of how this food might impact someone\'s health, considerin
           ),
         ],
       ),
-      body: FutureBuilder<Map<String, dynamic>>(
+      body: FutureBuilder<FoodCorrelationResponse>(
         future: _foodData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -105,6 +78,10 @@ Give a brief summary of how this food might impact someone\'s health, considerin
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
+            final foodData = snapshot.data!;
+            final foodName = foodData.foodName;
+            final symptomInfo = foodData.symptoms;
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -122,25 +99,44 @@ Give a brief summary of how this food might impact someone\'s health, considerin
                       ),
                     ),
                   ),
-                  if (_geminiSummary != null) ...[
-                    const SizedBox(height: 8),
-                    Container(
+                  ...symptomInfo.map((symptom) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Colors.grey.shade300),
                       ),
-                      child: Text(
-                        _geminiSummary!,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black87,
-                          height: 1.4,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            symptom.symptom,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            symptom.potentialCorrelation,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Colors.black87,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
                       ),
+                    );
+                  }),
+                  if (symptomInfo.isEmpty)
+                    const Text(
+                      'No relevant symptom correlations found.',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
-                  ],
                 ],
               ),
             );
