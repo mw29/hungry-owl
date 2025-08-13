@@ -60,6 +60,7 @@ class _FoodData extends ConsumerState<FoodData> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Food Details'),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.close),
@@ -67,6 +68,7 @@ class _FoodData extends ConsumerState<FoodData> {
               Navigator.popUntil(context, (route) => route.isFirst);
             },
           ),
+          
         ],
       ),
       body: FutureBuilder<FoodCorrelationResponse>(
@@ -80,6 +82,10 @@ class _FoodData extends ConsumerState<FoodData> {
             final foodData = snapshot.data!;
             final symptomInfo = foodData.symptoms;
 
+            final filteredSymptoms = symptomInfo
+                .where((symptom) => symptom.potentialCorrelations.isNotEmpty)
+                .toList();
+
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: ListView(
@@ -91,12 +97,9 @@ class _FoodData extends ConsumerState<FoodData> {
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
-                  symptomInfo.isNotEmpty
+                  filteredSymptoms.isNotEmpty
                       ? Column(
-                          children: symptomInfo
-                              .where((symptom) =>
-                                  symptom.potentialCorrelations.isNotEmpty)
-                              .map((symptom) {
+                          children: filteredSymptoms.map((symptom) {
                             return Card(
                               margin: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Padding(
@@ -120,10 +123,8 @@ class _FoodData extends ConsumerState<FoodData> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const Text(
-                                              "• ",
-                                              style: TextStyle(fontSize: 16),
-                                            ),
+                                            const Text("• ",
+                                                style: TextStyle(fontSize: 16)),
                                             Expanded(
                                               child: Text(
                                                 correlation,
@@ -144,6 +145,7 @@ class _FoodData extends ConsumerState<FoodData> {
                         )
                       : const Text(
                           'No relevant symptom correlations found.',
+                          style: TextStyle(fontStyle: FontStyle.italic),
                         ),
                 ],
               ),
