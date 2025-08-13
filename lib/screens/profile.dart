@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scan_app/models/users.dart';
-import 'package:scan_app/screens/terms_of_service.dart';
-import 'package:scan_app/screens/privacy_policy.dart';
+import 'package:hungryowl/models/users.dart';
+import 'package:hungryowl/screens/terms_of_service.dart';
+import 'package:hungryowl/screens/privacy_policy.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});

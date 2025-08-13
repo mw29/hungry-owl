@@ -1,6 +1,6 @@
 {
-    "name": "scan_app",
-    "short_name": "scan_app",
+    "name": "hungryowl",
+    "short_name": "hungryowl",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

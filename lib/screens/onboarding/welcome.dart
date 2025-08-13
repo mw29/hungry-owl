@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scan_app/models/users.dart';
-import 'package:scan_app/screens/home.dart';
+import 'package:hungryowl/models/users.dart';
+import 'package:hungryowl/screens/home.dart';
 
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});

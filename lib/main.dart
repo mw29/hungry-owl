@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:scan_app/providers/user_state.dart';
-import 'package:scan_app/screens/home.dart';
-import 'package:scan_app/services/db.dart';
+import 'package:hungryowl/providers/user_state.dart';
+import 'package:hungryowl/screens/home.dart';
+import 'package:hungryowl/services/db.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 

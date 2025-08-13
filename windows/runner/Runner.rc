@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "scan_app" "\0"
+            VALUE "CompanyName", "com.rootcause" "\0"
+            VALUE "FileDescription", "hungryowl" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "scan_app" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "scan_app.exe" "\0"
-            VALUE "ProductName", "scan_app" "\0"
+            VALUE "InternalName", "hungryowl" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.rootcause. All rights reserved." "\0"
+            VALUE "OriginalFilename", "hungryowl.exe" "\0"
+            VALUE "ProductName", "hungryowl" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

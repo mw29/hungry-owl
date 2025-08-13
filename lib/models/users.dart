@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scan_app/services/anon_id_generator.dart';
-import 'package:scan_app/types/internal_types.dart';
+import 'package:hungryowl/services/anon_id_generator.dart';
+import 'package:hungryowl/types/internal_types.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/utils/value_utils.dart';
 import 'package:uuid/uuid.dart';
-import 'package:scan_app/services/db.dart';
+import 'package:hungryowl/services/db.dart';
 
 final userStore = StoreRef<String, Map<String, dynamic>>('user');
 

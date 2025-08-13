@@ -1,4 +1,4 @@
-# scan_app
+# hungryowl
 
 A new Flutter project.
 

@@ -1,12 +1,12 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scan_app/providers/user_state.dart';
-import 'package:scan_app/screens/food_data.dart';
-import 'package:scan_app/screens/manual_entry.dart';
-import 'package:scan_app/screens/profile.dart';
-import 'package:scan_app/screens/symptom_settings.dart';
-import 'package:scan_app/screens/onboarding/welcome.dart';
+import 'package:hungryowl/providers/user_state.dart';
+import 'package:hungryowl/screens/food_data.dart';
+import 'package:hungryowl/screens/manual_entry.dart';
+import 'package:hungryowl/screens/profile.dart';
+import 'package:hungryowl/screens/symptom_settings.dart';
+import 'package:hungryowl/screens/onboarding/welcome.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});

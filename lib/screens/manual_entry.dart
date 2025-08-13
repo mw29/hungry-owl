@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scan_app/screens/food_data.dart';
+import 'package:hungryowl/screens/food_data.dart';
 
 class ManualEntryScreen extends StatefulWidget {
   const ManualEntryScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scan_app/models/users.dart';
+import 'package:hungryowl/models/users.dart';
 
 class SymptomSettings extends ConsumerStatefulWidget {
   const SymptomSettings({super.key});

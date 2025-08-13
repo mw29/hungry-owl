@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:scan_app/models/users.dart';
-import 'package:scan_app/services/llm_calls.dart';
+import 'package:hungryowl/models/users.dart';
+import 'package:hungryowl/services/llm_calls.dart';
 
 class FoodData extends ConsumerStatefulWidget {
   final String? imagePath;
