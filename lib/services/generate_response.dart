@@ -19,9 +19,13 @@ final jsonSchema = Schema.object(
           'symptom': Schema.string(
             description: 'Name of the symptom or outcome being analyzed.',
           ),
-          'potentialCorrelation': Schema.string(
+          'potentialCorrelation': Schema.array(
+            items: Schema.string(
+              description:
+                  'Short explanation of how the food could realistically be correlated to this symptom.',
+            ),
             description:
-                'Explanation of how hot dogs could realistically be correlated to this symptom, or null if no realistic correlation.',
+                'List of short explanations (1–3) describing realistic correlations between the food and the symptom. Empty if no realistic correlation exists.',
           ),
         },
       ),
@@ -50,7 +54,6 @@ Future<FoodCorrelationResponse> generateContent(
 
   final response = await chat.sendMessage(message);
 
-// If response has choices array:
   final jsonString = response.text;
   final Map<String, dynamic> jsonResponse = jsonDecode(jsonString!);
 

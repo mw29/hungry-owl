@@ -62,23 +62,28 @@ class User extends Document {
 
 class SymptomCorrelation {
   final String symptom;
-  final String potentialCorrelation;
+  final List<String> potentialCorrelations;
 
   SymptomCorrelation({
     required this.symptom,
-    required this.potentialCorrelation,
+    required this.potentialCorrelations,
   });
 
   factory SymptomCorrelation.fromJson(Map<String, dynamic> json) {
+    final raw = json['potentialCorrelation'];
     return SymptomCorrelation(
       symptom: json['symptom'],
-      potentialCorrelation: json['potentialCorrelation'],
+      potentialCorrelations: raw is List
+          ? List<String>.from(raw)
+          : raw is String
+              ? [raw]
+              : [],
     );
   }
 
   Map<String, dynamic> toJson() => {
         'symptom': symptom,
-        'potentialCorrelation': potentialCorrelation,
+        'potentialCorrelation': potentialCorrelations,
       };
 }
 

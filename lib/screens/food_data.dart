@@ -82,7 +82,7 @@ class _FoodData extends ConsumerState<FoodData> {
             final foodName = foodData.foodName;
             final symptomInfo = foodData.symptoms;
 
-            return SingleChildScrollView(
+            return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,44 +99,69 @@ class _FoodData extends ConsumerState<FoodData> {
                       ),
                     ),
                   ),
-                  ...symptomInfo.map((symptom) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            symptom.symptom,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
+                  Expanded(
+                    child: symptomInfo.isNotEmpty
+                        ? ListView.builder(
+                            itemCount: symptomInfo.length,
+                            itemBuilder: (context, index) {
+                              final symptom = symptomInfo[index];
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(8),
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      symptom.symptom,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    ...symptom.potentialCorrelations
+                                        .map((correlation) {
+                                      return Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            "• ",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              correlation,
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black87,
+                                                height: 1.4,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              );
+                            },
+                          )
+                        : const Text(
+                            'No relevant symptom correlations found.',
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            symptom.potentialCorrelation,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: Colors.black87,
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                  if (symptomInfo.isEmpty)
-                    const Text(
-                      'No relevant symptom correlations found.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
+                  ),
                 ],
               ),
             );
