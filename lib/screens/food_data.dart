@@ -93,7 +93,10 @@ class _FoodData extends ConsumerState<FoodData> {
                   ),
                   symptomInfo.isNotEmpty
                       ? Column(
-                          children: symptomInfo.map((symptom) {
+                          children: symptomInfo
+                              .where((symptom) =>
+                                  symptom.potentialCorrelations.isNotEmpty)
+                              .map((symptom) {
                             return Card(
                               margin: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Padding(
@@ -102,7 +105,7 @@ class _FoodData extends ConsumerState<FoodData> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      symptom.symptom,
+                                      '${isValidSingleEmoji(symptom.emoji) ? symptom.emoji : '🤨'} ${capitalizedTitle(symptom.symptom)}',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge,

@@ -19,6 +19,9 @@ final jsonSchema = Schema.object(
           'symptom': Schema.string(
             description: 'Name of the symptom or outcome being analyzed.',
           ),
+          'emoji': Schema.string(
+            description: 'One emoji that best represents the symptom.',
+          ),
           'potentialCorrelation': Schema.array(
             items: Schema.string(
               description:
@@ -46,7 +49,7 @@ Future<FoodCorrelationResponse> generateContent(
   );
   final message = Content('user', [
     TextPart(
-        'Analyze how the ingredients in $foodName could plausibly cause or worsen the following symptoms/outcomes: $symptomList. Only include symptoms if there is clear, strong, and scientifically supported evidence that $foodName could directly cause or exacerbate them. Exclude any symptom where the link is weak, indirect, anecdotal, or beneficial. One bullet point worth of text MAX!'),
+        'Analyze how the ingredients in $foodName could plausibly cause or worsen the following symptoms/outcomes: $symptomList. Only include symptoms if there is clear, strong, and scientifically supported evidence that $foodName could directly cause or exacerbate them. Exclude any symptom where the link is weak, indirect, anecdotal, or beneficial. One bullet point worth of text MAX! Assign an emoji that best represents the symptom name to emoji.'),
     TextPart('INSERT_INPUT_HERE'),
   ]);
 
