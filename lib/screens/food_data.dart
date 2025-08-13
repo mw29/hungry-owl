@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hungryowl/models/users.dart';
 import 'package:hungryowl/services/generate_response.dart';
 import 'package:hungryowl/services/llm_calls.dart';
+import 'package:hungryowl/services/utils.dart';
 import 'package:hungryowl/types/internal_types.dart';
 
 class FoodData extends ConsumerStatefulWidget {
@@ -59,8 +60,6 @@ class _FoodData extends ConsumerState<FoodData> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Food Details'),
-        elevation: 0,
-        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.close),
@@ -79,89 +78,70 @@ class _FoodData extends ConsumerState<FoodData> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             final foodData = snapshot.data!;
-            final foodName = foodData.foodName;
             final symptomInfo = foodData.symptoms;
 
             return Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: Text(
-                      foodName,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        letterSpacing: 1.2,
-                      ),
+                      capitalizedTitle(foodName),
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
-                  Expanded(
-                    child: symptomInfo.isNotEmpty
-                        ? ListView.builder(
-                            itemCount: symptomInfo.length,
-                            itemBuilder: (context, index) {
-                              final symptom = symptomInfo[index];
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(8),
-                                  border:
-                                      Border.all(color: Colors.grey.shade300),
-                                ),
+                  symptomInfo.isNotEmpty
+                      ? Column(
+                          children: symptomInfo.map((symptom) {
+                            return Card(
+                              margin: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       symptom.symptom,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black87,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge,
                                     ),
-                                    const SizedBox(height: 6),
+                                    const SizedBox(height: 8.0),
                                     ...symptom.potentialCorrelations
                                         .map((correlation) {
-                                      return Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "• ",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black87,
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16.0, bottom: 5),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              "• ",
+                                              style: TextStyle(fontSize: 16),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              correlation,
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black87,
-                                                height: 1.4,
+                                            Expanded(
+                                              child: Text(
+                                                correlation,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       );
                                     }),
                                   ],
                                 ),
-                              );
-                            },
-                          )
-                        : const Text(
-                            'No relevant symptom correlations found.',
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
-                          ),
-                  ),
+                              ),
+                            );
+                          }).toList(),
+                        )
+                      : const Text(
+                          'No relevant symptom correlations found.',
+                        ),
                 ],
               ),
             );
