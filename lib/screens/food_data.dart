@@ -68,7 +68,6 @@ class _FoodData extends ConsumerState<FoodData> {
               Navigator.popUntil(context, (route) => route.isFirst);
             },
           ),
-          
         ],
       ),
       body: FutureBuilder<FoodCorrelationResponse>(
@@ -93,7 +92,7 @@ class _FoodData extends ConsumerState<FoodData> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: Text(
-                      capitalizedTitle(foodName),
+                      '${isValidSingleEmoji(foodData.emoji) ? foodData.emoji : '🍴'} ${capitalizedTitle(foodData.foodName)}',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
@@ -108,7 +107,7 @@ class _FoodData extends ConsumerState<FoodData> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '${isValidSingleEmoji(symptom.emoji) ? symptom.emoji : '🤨'} ${capitalizedTitle(symptom.symptom)}',
+                                      capitalizedTitle(symptom.symptom),
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge,
