@@ -5,11 +5,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:scan_app/providers/user_state.dart';
 import 'package:scan_app/screens/home.dart';
 import 'package:scan_app/services/db.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Db().initialize();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 

@@ -1,0 +1,22 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "hungryowl-ai-aa552",
+          "appId": "1:381644037320:android:3310d5e67c9fd1c87c19fd",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "hungryowl-ai-aa552",
+          "configurations": {
+            "android": "1:381644037320:android:3310d5e67c9fd1c87c19fd",
+            "ios": "1:381644037320:ios:355b482d4109ef847c19fd"
+          }
+        }
+      }
+    }
+  }
+}
