@@ -60,61 +60,6 @@ class User extends Document {
   }
 }
 
-class SymptomCorrelation {
-  final String symptom;
-  final List<String> potentialCorrelations;
-
-  SymptomCorrelation({
-    required this.symptom,
-    required this.potentialCorrelations,
-  });
-
-  factory SymptomCorrelation.fromJson(Map<String, dynamic> json) {
-    final raw = json['potentialCorrelation'];
-    return SymptomCorrelation(
-      symptom: json['symptom'],
-      potentialCorrelations: raw is List
-          ? List<String>.from(raw)
-          : raw is String
-              ? [raw]
-              : [],
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'symptom': symptom,
-        'potentialCorrelation': potentialCorrelations,
-      };
-}
-
-class FoodCorrelationResponse {
-  final String foodName;
-  final String emoji;
-  final List<SymptomCorrelation> symptoms;
-
-  FoodCorrelationResponse({
-    required this.foodName,
-    required this.emoji,
-    required this.symptoms,
-  });
-
-  factory FoodCorrelationResponse.fromJson(Map<String, dynamic> json) {
-    return FoodCorrelationResponse(
-      foodName: json['foodName'],
-      emoji: json['emoji'],
-      symptoms: (json['symptoms'] as List<dynamic>)
-          .map((item) => SymptomCorrelation.fromJson(item))
-          .toList(),
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'foodName': foodName,
-        'emoji': emoji,
-        'symptoms': symptoms.map((s) => s.toJson()).toList(),
-      };
-}
-
 class SymptomInfo {
   final String symptomName;
   final int symptomRiskScore;

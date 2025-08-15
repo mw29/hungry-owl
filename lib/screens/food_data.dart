@@ -6,6 +6,8 @@ import 'package:hungryowl/services/generate_response.dart';
 import 'package:hungryowl/services/llm_calls.dart';
 import 'package:hungryowl/services/utils.dart';
 import 'package:hungryowl/types/internal_types.dart';
+import 'package:hungryowl/widgets/food_data/ingredient_list.dart';
+import 'package:hungryowl/widgets/food_data/risk_score_bar.dart';
 
 class FoodData extends ConsumerStatefulWidget {
   final String? imagePath;
@@ -22,7 +24,7 @@ class FoodData extends ConsumerStatefulWidget {
 }
 
 class _FoodData extends ConsumerState<FoodData> {
-  late Future<FoodCorrelationResponse> _foodData;
+  late Future<FoodSymptomInfo> _foodData;
   late String foodName;
 
   @override
@@ -31,14 +33,9 @@ class _FoodData extends ConsumerState<FoodData> {
     _foodData = _initFoodData();
   }
 
-  Future<FoodCorrelationResponse> _initFoodData() async {
-    final name = widget.foodName ?? await _identifyFood();
-
-    setState(() {
-      foodName = name;
-    });
-
-    return await _identifyTriggers();
+  Future<FoodSymptomInfo> _initFoodData() async {
+    return await _identifyRiskAndRelation(
+        widget.foodName ?? await _identifyFood());
   }
 
   Future<String> _identifyFood() async {
@@ -47,113 +44,99 @@ class _FoodData extends ConsumerState<FoodData> {
     return data.name;
   }
 
-  Future<FoodCorrelationResponse> _identifyTriggers() async {
+  Future<FoodSymptomInfo> _identifyRiskAndRelation(String foodName) async {
     final user = ref.read(usersProvider).value;
-    final symptomsList = user?.symptoms ?? [];
-    final symptomList = symptomsList.join(', ');
-    final response = await generateContent(foodName, symptomList);
+    final symptomList = user?.symptoms ?? [];
+    final response = await generateContent(foodName, symptomList.join(', '));
     return response;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Food Details'),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              Navigator.popUntil(context, (route) => route.isFirst);
-            },
-          ),
-        ],
-      ),
-      body: FutureBuilder<FoodCorrelationResponse>(
+    return FutureBuilder<FoodSymptomInfo>(
         future: _foodData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+              ),
+              body: const Center(child: CircularProgressIndicator()),
+            );
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            final foodData = snapshot.data!;
-            final symptomInfo = foodData.symptoms;
-
-            final filteredSymptoms = symptomInfo
-                .where((symptom) => symptom.potentialCorrelations.isNotEmpty)
-                .toList();
-
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Text(
-                      '${isValidSingleEmoji(foodData.emoji) ? foodData.emoji : '🍴'} ${capitalizedTitle(foodData.foodName)}',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
+            return Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
                   ),
-                  filteredSymptoms.isNotEmpty
-                      ? Column(
-                          children: filteredSymptoms.map((symptom) {
-                            return Card(
-                              margin: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      capitalizedTitle(symptom.symptom),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge,
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    ...symptom.potentialCorrelations
-                                        .map((correlation) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16.0, bottom: 5),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text("• ",
-                                                style: TextStyle(fontSize: 16)),
-                                            Expanded(
-                                              child: Text(
-                                                correlation,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        )
-                      : const Text(
-                          'No relevant symptom correlations found.',
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
                 ],
               ),
+              body: Center(child: Text('Error: ${snapshot.error}')),
             );
-          } else {
-            return const Center(child: Text('No data available'));
+          } else if (snapshot.hasData) {
+            final foodData = snapshot.data!;
+
+            return Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                title: Text(
+                    '${isValidSingleEmoji(foodData.foodEmoji) ? foodData.foodEmoji : '🍽️'} ${foodData.foodName}'),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
+                  ),
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Overview',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          Icon(Icons.info), // TODO CHANGE THIS INTO A POPUP
+                        ],
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      RiskScoreBar(
+                        score: foodData.overallRiskScore,
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(foodData.overview),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Text(
+                        "Relevant Ingredients",
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      IngredientsListView(
+                        ingredients: foodData.relevantIngredients,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
           }
-        },
-      ),
-    );
+          return const Center(child: Text('No data available'));
+        });
   }
 }

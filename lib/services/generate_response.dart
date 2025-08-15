@@ -13,22 +13,46 @@ final jsonSchema = Schema.object(
     'foodName': Schema.string(
       description: 'Name of the food being analyzed.',
     ),
-    'emoji': Schema.string(
+    'foodEmoji': Schema.string(
       description: 'One emoji that best represents the food.',
     ),
-    'symptoms': Schema.array(
+    'overallRiskScore': Schema.integer(
+      description:
+          'Overall risk score for the food (higher means more likely to cause symptoms).',
+    ),
+    'overview': Schema.string(
+      description:
+          'Brief summary of the food’s potential effects for someone with relevant sensitivities.',
+    ),
+    'relevantIngredients': Schema.array(
+      description:
+          'List of ingredients in the food that may be relevant to symptoms.',
       items: Schema.object(
         properties: {
-          'symptom': Schema.string(
-            description: 'Name of the symptom or outcome being analyzed.',
+          'ingredientName': Schema.string(
+            description: 'Name of the ingredient.',
           ),
-          'potentialCorrelation': Schema.array(
-            items: Schema.string(
-              description:
-                  'Short explanation of how the food could realistically be correlated to this symptom.',
+          'emoji': Schema.string(
+            description: 'One emoji that best represents the ingredient.',
+          ),
+          'relatedSymptoms': Schema.array(
+            description: 'List of symptoms associated with this ingredient.',
+            items: Schema.object(
+              properties: {
+                'symptomName': Schema.string(
+                  description: 'Name of the symptom.',
+                ),
+                'symptomRiskScore': Schema.integer(
+                  description:
+                      'Risk score for this symptom from this ingredient.',
+                ),
+                'information': Schema.array(
+                  description:
+                      'List of explanations for how the ingredient could be linked to this symptom.',
+                  items: Schema.string(),
+                ),
+              },
             ),
-            description:
-                'List of short explanations (1–3) describing realistic correlations between the food and the symptom. Empty if no realistic correlation exists.',
           ),
         },
       ),
@@ -36,7 +60,7 @@ final jsonSchema = Schema.object(
   },
 );
 
-Future<FoodCorrelationResponse> generateContent(
+Future<FoodSymptomInfo> generateContent(
     String foodName, String symptomList) async {
   final generationConfig = GenerationConfig(
     responseSchema: jsonSchema,
@@ -49,7 +73,7 @@ Future<FoodCorrelationResponse> generateContent(
   );
   final message = Content('user', [
     TextPart(
-        'Analyze how the ingredients in $foodName could plausibly cause or worsen the following symptoms/outcomes: $symptomList. Only include symptoms if there is clear, strong, and scientifically supported evidence that $foodName could directly cause or exacerbate them. Exclude any symptom where the link is weak, indirect, anecdotal, or beneficial. One bullet point worth of text MAX! Assign one emoji to best represent the food\'s name.'),
+        'You are a symptom/ingredient analyzer. You will be given a food and a list of symptoms. You will dissect the food into ingredients and for each ingredient give a risk score (how likely the ingredient is to cause the symptom for individuals with a history of the symptom) for each symptom from 1-10 and explain why you gave it that score as 1-3 short bullet points in the information field. Through out any ingredients that could not plausibly cause the symptoms, no antidotal evidence, hypotheticals, or indirect links. Assign one single emoji where asked. Food: $foodName, Symptoms: $symptomList'),
     TextPart('INSERT_INPUT_HERE'),
   ]);
 
@@ -60,5 +84,5 @@ Future<FoodCorrelationResponse> generateContent(
   final jsonString = response.text;
   final Map<String, dynamic> jsonResponse = jsonDecode(jsonString!);
 
-  return FoodCorrelationResponse.fromJson(jsonResponse);
+  return FoodSymptomInfo.fromJson(jsonResponse);
 }
