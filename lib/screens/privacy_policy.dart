@@ -24,7 +24,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               ),
               SizedBox(height: 16),
               Text(
-                'Your privacy is important to us. The Scan App is designed to run entirely on your device. '
+                'Your privacy is important to us. HungryOwl is designed to run entirely on your device. '
                 'We do not collect, store, track, or sell any personal information.',
                 style: TextStyle(fontSize: 16),
               ),
@@ -38,7 +38,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                'When you use the Scan App’s prompt feature, your prompts are sent directly to the Gemini API '
+                'When you use HungryOwl’s prompt feature, your prompts are sent directly to the Gemini API '
                 'to process your request. We do not have access to, store, or share any of this information. '
                 'Please note that your use of Gemini is subject to Google’s own privacy policy.',
                 style: TextStyle(fontSize: 16),
@@ -53,7 +53,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                'Because the Scan App does not store any personal data, there is nothing for us to retain or delete.',
+                'Since HungryOwl does not store any personal data, there is nothing for us to retain or delete.',
                 style: TextStyle(fontSize: 16),
               ),
             ],

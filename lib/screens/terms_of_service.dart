@@ -33,13 +33,13 @@ class TermsOfServiceScreen extends StatelessWidget {
               ),
               SizedBox(height: 16),
               Text(
-                'By using the Scan App, you agree to the following terms and conditions. '
+                'By using HungryOwl, you agree to the following terms and conditions. '
                 'Please read them carefully.',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
               Text(
-                'Use of the Scan App',
+                'Use of HungryOwl',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -47,7 +47,7 @@ class TermsOfServiceScreen extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                'The Scan App is provided for personal use only. You agree not to misuse the Scan App '
+                'HungryOwl is provided for personal use only. You agree not to misuse HungryOwl '
                 'or use it for any unlawful purposes. All features are provided as-is, '
                 'without any guarantee of availability or functionality.',
                 style: TextStyle(fontSize: 16),
@@ -62,7 +62,7 @@ class TermsOfServiceScreen extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                'I do not collect, store, or retain any personal information through the Scan App. '
+                'I do not collect, store, or retain any personal information through HungryOwl. '
                 'Any prompts or queries sent through the Gemini API are subject to Google’s terms '
                 'and privacy policy.',
                 style: TextStyle(fontSize: 16),
@@ -78,7 +78,7 @@ class TermsOfServiceScreen extends StatelessWidget {
               SizedBox(height: 8),
               Text(
                 'I am not responsible for any damages, losses, or issues that may occur '
-                'from using the Scan App, including but not limited to data loss, device issues, '
+                'from using HungryOwl, including but not limited to data loss, device issues, '
                 'or third-party service interruptions.',
                 style: TextStyle(fontSize: 16),
               ),
@@ -92,7 +92,7 @@ class TermsOfServiceScreen extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                'I may update these Terms of Service from time to time. Continued use of the Scan App '
+                'I may update these Terms of Service from time to time. Continued use of HungryOwl'
                 'after changes have been made will constitute your acceptance of the updated terms.',
                 style: TextStyle(fontSize: 16),
               ),

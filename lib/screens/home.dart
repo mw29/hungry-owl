@@ -314,7 +314,7 @@ class HomePageState extends ConsumerState<HomePage>
     });
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Scan App"),
+        title: const Text("HungryOwl"),
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
