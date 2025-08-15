@@ -85,7 +85,7 @@ class _FoodData extends ConsumerState<FoodData> {
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 title: Text(
-                    '${isValidSingleEmoji(foodData.foodEmoji) ? foodData.foodEmoji : '🍽️'} ${foodData.foodName}'),
+                    '${isValidSingleEmoji(foodData.foodEmoji) ? foodData.foodEmoji : '🍽️'} ${capitalizedTitle(foodData.foodName)}'),
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.close),

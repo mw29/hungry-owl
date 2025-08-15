@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hungryowl/services/utils.dart';
 import 'package:hungryowl/types/internal_types.dart';
 import 'package:hungryowl/widgets/food_data/symptom_risk_card.dart';
 
@@ -100,7 +101,9 @@ class _IngredientCardState extends State<IngredientCard>
               child: Row(
                 children: [
                   Text(
-                    widget.ingredient.emoji,
+                    isValidSingleEmoji(widget.ingredient.emoji)
+                        ? widget.ingredient.emoji
+                        : '🧂',
                     style: const TextStyle(fontSize: 24),
                   ),
                   const SizedBox(width: 12),

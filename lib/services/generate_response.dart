@@ -63,6 +63,7 @@ final jsonSchema = Schema.object(
 Future<FoodSymptomInfo> generateContent(
     String foodName, String symptomList) async {
   final generationConfig = GenerationConfig(
+    temperature: 0,
     responseSchema: jsonSchema,
     responseMimeType: 'application/json',
   );
