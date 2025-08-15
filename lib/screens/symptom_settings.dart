@@ -103,12 +103,32 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
             Wrap(
               spacing: 8.0,
               runSpacing: 4.0,
-              children: _symptoms
-                  .map((symptom) => Chip(
-                        label: Text(symptom),
-                        onDeleted: () => _removeSymptom(symptom),
-                      ))
-                  .toList(),
+              children: _symptoms.map((symptom) {
+                return Material(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            symptom,
+                            softWrap: true,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => _removeSymptom(symptom),
+                          child: const Icon(Icons.close, size: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),
