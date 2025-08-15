@@ -6,9 +6,10 @@
 import 'dart:convert';
 
 import 'package:firebase_ai/firebase_ai.dart';
+import 'package:hungryowl/services/utils.dart';
 import 'package:hungryowl/types/internal_types.dart';
 
-final jsonSchema = Schema.object(
+final ingredientJsonSchema = Schema.object(
   properties: {
     'foodName': Schema.string(
       description: 'Name of the food being analyzed.',
@@ -60,11 +61,11 @@ final jsonSchema = Schema.object(
   },
 );
 
-Future<FoodSymptomInfo> generateContent(
+Future<FoodSymptomInfo> generateAnalysisContent(
     String foodName, String symptomList) async {
   final generationConfig = GenerationConfig(
     temperature: 0,
-    responseSchema: jsonSchema,
+    responseSchema: ingredientJsonSchema,
     responseMimeType: 'application/json',
   );
 
@@ -86,4 +87,39 @@ Future<FoodSymptomInfo> generateContent(
   final Map<String, dynamic> jsonResponse = jsonDecode(jsonString!);
 
   return FoodSymptomInfo.fromJson(jsonResponse);
+}
+
+final foodNameJsonSchema = Schema.object(properties: {
+  'foodName': Schema.string(
+      description: 'Most accurate name for the food shown in the picture or unknown if unidentifiable'),
+});
+
+Future<String> generateFoodContent(String path) async {
+  final imageBytes = await imagePathToBytes(path);
+
+  final generationConfig = GenerationConfig(
+    temperature: 0,
+    responseSchema: foodNameJsonSchema,
+    responseMimeType: 'application/json',
+  );
+
+  final model = FirebaseAI.googleAI().generativeModel(
+    model: 'gemini-2.0-flash',
+    generationConfig: generationConfig,
+  );
+
+  final chat = model.startChat();
+
+  final message = Content('user', [
+    InlineDataPart('image/png', imageBytes),
+    TextPart(
+        'Please identify the food shown in this image. Be specific: include brand and flavors if applicable. Return unknown as food name if you cannot successfully identify the food.'),
+  ]);
+
+  final response = await chat.sendMessage(message);
+
+  final jsonString = response.text;
+
+  final Map<String, dynamic> jsonResponse = jsonDecode(jsonString!);
+  return jsonResponse['foodName'];
 }

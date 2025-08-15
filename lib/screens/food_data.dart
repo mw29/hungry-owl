@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hungryowl/models/users.dart';
+import 'package:hungryowl/screens/manual_entry.dart';
 import 'package:hungryowl/services/generate_response.dart';
-import 'package:hungryowl/services/llm_calls.dart';
 import 'package:hungryowl/services/utils.dart';
 import 'package:hungryowl/types/internal_types.dart';
 import 'package:hungryowl/widgets/food_data/ingredient_list.dart';
@@ -35,20 +34,30 @@ class _FoodData extends ConsumerState<FoodData> {
   }
 
   Future<FoodSymptomInfo> _initFoodData() async {
-    return await _identifyRiskAndRelation(
-        widget.foodName ?? await _identifyFood());
+    try {
+      final name = widget.foodName ?? await _identifyFood();
+      return await _identifyRiskAndRelation(name);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<String> _identifyFood() async {
-    var data = await transcribeFoodImage(dotenv.env['TEST_IMAGE']!);
+    print('image path: ${widget.imagePath}');
+    final result = await generateFoodContent(widget.imagePath!);
 
-    return data.name;
+    if (result.toLowerCase() == 'unknown' || result.toLowerCase() == '') {
+      throw Exception('Unable to identify the food.');
+    }
+
+    return result;
   }
 
   Future<FoodSymptomInfo> _identifyRiskAndRelation(String foodName) async {
     final user = ref.read(usersProvider).value;
     final symptomList = user?.symptoms ?? [];
-    final response = await generateContent(foodName, symptomList.join(', '));
+    final response =
+        await generateAnalysisContent(foodName, symptomList.join(', '));
     return response;
   }
 
@@ -77,7 +86,60 @@ class _FoodData extends ConsumerState<FoodData> {
                   ),
                 ],
               ),
-              body: Center(child: Text('Error: ${snapshot.error}')),
+              body: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Colors.redAccent,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Unable to identify food!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'This can happen if the image is blurry, the food is too complex, or it wasn’t clear in the picture.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Retake Picture'),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text("or"),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ManualEntryScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.edit),
+                        label: const Text('Enter Food Manually'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             );
           } else if (snapshot.hasData) {
             final foodData = snapshot.data!;

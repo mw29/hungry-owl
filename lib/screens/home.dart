@@ -115,6 +115,7 @@ class HomePageState extends ConsumerState<HomePage>
   }
 
   void _onItemTapped(int index) {
+    FocusScope.of(context).unfocus();
     setState(() {
       _selectedIndex = index;
     });
@@ -278,7 +279,7 @@ class HomePageState extends ConsumerState<HomePage>
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "Take a picture of your food",
+                    "Take a picture of your food.",
                     style: TextStyle(
                       color: Colors.white.withAlpha(100),
                       fontSize: 14,
