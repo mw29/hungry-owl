@@ -114,3 +114,91 @@ class FoodCorrelationResponse {
         'symptoms': symptoms.map((s) => s.toJson()).toList(),
       };
 }
+
+class SymptomInfo {
+  final String symptomName;
+  final int symptomRiskScore;
+  final List<String> information;
+
+  SymptomInfo({
+    required this.symptomName,
+    required this.symptomRiskScore,
+    required this.information,
+  });
+
+  factory SymptomInfo.fromJson(Map<String, dynamic> json) {
+    return SymptomInfo(
+        symptomName: json['symptomName'],
+        symptomRiskScore: json['symptomRiskScore'],
+        information: List<String>.from(json['information']));
+  }
+
+  Map<String, dynamic> toJson() => {
+        'symptomName': symptomName,
+        'symptomRiskScore': symptomRiskScore,
+        'information': information,
+      };
+}
+
+class IngredientInfo {
+  final String ingredientName;
+  final String emoji;
+  final List<SymptomInfo> relatedSymptoms;
+
+  IngredientInfo(
+      {required this.ingredientName,
+      required this.emoji,
+      required this.relatedSymptoms});
+
+  factory IngredientInfo.fromJson(Map<String, dynamic> json) {
+    return IngredientInfo(
+        ingredientName: json['ingredientName'],
+        emoji: json['emoji'],
+        relatedSymptoms: (json['relatedSymptoms'] as List<dynamic>)
+            .map((item) => SymptomInfo.fromJson(item))
+            .toList());
+  }
+
+  Map<String, dynamic> toJson() => {
+        'ingredientName': ingredientName,
+        'emoji': emoji,
+        'relatedSymptoms': relatedSymptoms.map((r) => r.toJson()).toList(),
+      };
+}
+
+class FoodSymptomInfo {
+  final String foodName;
+  final String foodEmoji;
+  final int overallRiskScore;
+  final String overview;
+  final List<IngredientInfo> relevantIngredients;
+
+  FoodSymptomInfo({
+    required this.foodName,
+    required this.foodEmoji,
+    required this.overallRiskScore,
+    required this.overview,
+    required this.relevantIngredients,
+  });
+
+  factory FoodSymptomInfo.fromJson(Map<String, dynamic> json) {
+    return FoodSymptomInfo(
+      foodName: json['foodName'],
+      foodEmoji: json['foodEmoji'],
+      overallRiskScore: json['overallRiskScore'],
+      overview: json['overview'],
+      relevantIngredients: (json['relevantIngredients'] as List<dynamic>)
+          .map((item) => IngredientInfo.fromJson(item))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'foodName': foodName,
+        'foodEmoji': foodEmoji,
+        'overallRiskScore': overallRiskScore,
+        'overview': overview,
+        'relevantIngredients':
+            relevantIngredients.map((i) => i.toJson()).toList(),
+      };
+}
