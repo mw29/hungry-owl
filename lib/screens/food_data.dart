@@ -8,6 +8,7 @@ import 'package:hungryowl/services/utils.dart';
 import 'package:hungryowl/types/internal_types.dart';
 import 'package:hungryowl/widgets/food_data/ingredient_list.dart';
 import 'package:hungryowl/widgets/food_data/risk_score_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FoodData extends ConsumerStatefulWidget {
   final String? imagePath;
@@ -96,7 +97,7 @@ class _FoodData extends ConsumerState<FoodData> {
                 ],
               ),
               body: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(8.0),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -107,7 +108,107 @@ class _FoodData extends ConsumerState<FoodData> {
                             'Overview',
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
-                          Icon(Icons.info), // TODO CHANGE THIS INTO A POPUP
+                          IconButton(
+                            icon: const Icon(Icons.info_outline),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('About This Data'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Medical Disclaimer',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                        ),
+                                        const Text(
+                                            'This is not intended as medical advice. AI can make mistakes. Always consult with a qualified healthcare professional before making any health-related decisions.'),
+                                        const SizedBox(height: 10),
+                                        const Text(
+                                          'Sources',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                        ),
+                                        const Text(
+                                            'Below is a comprehensive list of citations and resources to help you explore your personal ingredient analysis in greater detail.'),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text(
+                                          "Digestive Disfunction",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () => launchUrl(Uri.parse(
+                                              'https://www.nutrition.gov/topics/diet-and-health-conditions/digestive-disorders')),
+                                          child: const Text(
+                                            'Read about digestive disorders and disfunction',
+                                            style: TextStyle(
+                                              color: Colors.blue,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          "Diet and Sleep",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () => launchUrl(Uri.parse(
+                                              'https://pubmed.ncbi.nlm.nih.gov/33549913/')),
+                                          child: const Text(
+                                            'Read about the correlation between diet and sleep',
+                                            style: TextStyle(
+                                              color: Colors.blue,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          "General Nutrition",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () => launchUrl(Uri.parse(
+                                              'https://nutrition.org/')),
+                                          child: const Text(
+                                            'Visit the American Society for Nutrition',
+                                            style: TextStyle(
+                                              color: Colors.blue,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text('Close'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          )
                         ],
                       ),
                       SizedBox(
