@@ -122,44 +122,181 @@ class HomePageState extends ConsumerState<HomePage>
 
   List<Widget> get _pages => [
         _hasPermission
-            ? CameraPreview(_controller!)
+            ? _buildCameraPreview()
             : Center(child: _buildPermissionUI()),
         const SymptomSettings(),
       ];
 
   Widget _buildPermissionUI() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (!_noCameras) ...[
-          ElevatedButton(
-            onPressed: _requestCameraPermissions,
-            child: const Text("Request Camera Permission"),
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.camera_alt,
+            size: 64,
+            color: Theme.of(context).primaryColor,
           ),
-          const SizedBox(height: 16),
-          const Text("or"),
-          const SizedBox(height: 16),
-        ],
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ManualEntryScreen(),
+          const SizedBox(height: 20),
+          Text(
+            _noCameras
+                ? "No camera found on this device."
+                : "Scan a food item to get insights.\n\nGrant camera access to start scanning, or manually enter food details below.",
+            style: Theme.of(context).textTheme.bodyLarge,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 30),
+          if (!_noCameras) ...[
+            ElevatedButton.icon(
+              icon: const Icon(Icons.camera),
+              label: const Text("Enable Camera"),
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                textStyle: const TextStyle(fontSize: 16),
               ),
-            );
-          },
-          child: const Text('Enter Food Manually'),
-        ),
-        if (_errorMessage != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: Text(
+              onPressed: _requestCameraPermissions,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "OR",
+              style: TextStyle(
+                  color: Colors.grey.shade600, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+          ],
+          OutlinedButton.icon(
+            icon: const Icon(Icons.edit),
+            label: const Text("Enter Food Manually"),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              textStyle: const TextStyle(fontSize: 16),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ManualEntryScreen(),
+                ),
+              );
+            },
+          ),
+          if (_errorMessage != null) ...[
+            const SizedBox(height: 20),
+            Text(
               "Error: $_errorMessage",
               style: const TextStyle(color: Colors.red),
               textAlign: TextAlign.center,
             ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCameraPreview() {
+    if (_controller == null || !_controller!.value.isInitialized) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final size = MediaQuery.of(context).size;
+    final deviceRatio = size.width / size.height;
+    final cameraRatio = _controller!.value.previewSize!.height /
+        _controller!.value.previewSize!.width;
+
+    return Stack(
+      children: [
+        Center(
+          child: OverflowBox(
+            maxHeight: deviceRatio > cameraRatio
+                ? size.width / cameraRatio
+                : size.height,
+            maxWidth: deviceRatio > cameraRatio
+                ? size.width
+                : size.height * cameraRatio,
+            child: CameraPreview(_controller!),
           ),
+        ),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.black38,
+                    child: IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.white),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ManualEntryScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  CircleAvatar(
+                    backgroundColor: Colors.black38,
+                    child: IconButton(
+                      icon: Icon(
+                        _flashMode == FlashMode.torch
+                            ? Icons.flash_on
+                            : Icons.flash_off,
+                        color: Colors.white,
+                      ),
+                      onPressed: _toggleFlash,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SafeArea(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'take_picture',
+                    onPressed: _takePicture,
+                    backgroundColor: Colors.white,
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Take a picture of your food",
+                    style: TextStyle(
+                      color: Colors.white.withAlpha(100),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      shadows: const [
+                        Shadow(
+                          offset: Offset(0, 1),
+                          blurRadius: 2,
+                          color: Colors.black45,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -178,13 +315,6 @@ class HomePageState extends ConsumerState<HomePage>
       appBar: AppBar(
         title: const Text("Scan App"),
         actions: [
-          if (_hasPermission)
-            IconButton(
-              icon: Icon(_flashMode == FlashMode.torch
-                  ? Icons.flash_on
-                  : Icons.flash_off),
-              onPressed: _toggleFlash,
-            ),
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
@@ -204,37 +334,6 @@ class HomePageState extends ConsumerState<HomePage>
               index: _selectedIndex,
               children: _pages,
             ),
-      floatingActionButton: _selectedIndex == 0 && _hasPermission
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                FloatingActionButton(
-                  heroTag: 'home_fab',
-                  onPressed: _takePicture,
-                  child: const Icon(Icons.camera),
-                ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ManualEntryScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Manual Entry',
-                    style: TextStyle(
-                      color: Colors.white,
-                      backgroundColor: Colors.black,
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
