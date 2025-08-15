@@ -81,6 +81,7 @@ class _FoodData extends ConsumerState<FoodData> {
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () {
+                      FocusScope.of(context).unfocus();
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                   ),
@@ -153,6 +154,7 @@ class _FoodData extends ConsumerState<FoodData> {
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () {
+                      FocusScope.of(context).unfocus();
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                   ),

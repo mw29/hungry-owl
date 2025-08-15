@@ -12,26 +12,9 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreen extends ConsumerState<ProfileScreen> {
-  final _symptomsController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final currUser = ref.read(usersProvider).value;
-      if (currUser != null) {
-        _symptomsController.text = _formatSymptoms(currUser.symptoms);
-      }
-    });
-  }
-
-  String _formatSymptoms(dynamic symptoms) {
-    if (symptoms is List<String>) {
-      return symptoms.join(', ');
-    } else if (symptoms is String) {
-      return symptoms;
-    }
-    return '';
   }
 
   @override

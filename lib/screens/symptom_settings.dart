@@ -10,36 +10,47 @@ class SymptomSettings extends ConsumerStatefulWidget {
 }
 
 class _SymptomSettings extends ConsumerState<SymptomSettings> {
-  final _symptomsController = TextEditingController();
-  bool _hasSetInitialSymptoms = false;
-  String _initialSymptoms = '';
-  bool _hasChanges = false;
-  bool _isSaving = false;
+  final _symptomController = TextEditingController();
+  List<String> _symptoms = [];
 
   @override
   void initState() {
     super.initState();
-    _symptomsController.addListener(() {
-      if (!_hasSetInitialSymptoms) return;
-      final current = _symptomsController.text.trim();
-      setState(() {
-        _hasChanges = current != _initialSymptoms;
-      });
+    final user = ref.read(usersProvider).value;
+    if (user != null) {
+      _initializeSymptoms(user.symptoms);
+    }
+  }
+
+  void _initializeSymptoms(List<String> symptoms) {
+    setState(() {
+      _symptoms = symptoms;
     });
   }
 
-  String _formatSymptoms(dynamic symptoms) {
-    if (symptoms is List<String>) {
-      return symptoms.join(', ');
-    } else if (symptoms is String) {
-      return symptoms;
+  void _addSymptom() {
+    final symptom = _symptomController.text.trim();
+    if (symptom.isNotEmpty && !_symptoms.contains(symptom)) {
+      final newSymptoms = [..._symptoms, symptom];
+      setState(() {
+        _symptoms = newSymptoms;
+        _symptomController.clear();
+      });
+      updateUser(updatedData: {'symptoms': newSymptoms});
     }
-    return '';
+  }
+
+  void _removeSymptom(String symptom) {
+    final newSymptoms = _symptoms.where((s) => s != symptom).toList();
+    setState(() {
+      _symptoms = newSymptoms;
+    });
+    updateUser(updatedData: {'symptoms': newSymptoms});
   }
 
   @override
   void dispose() {
-    _symptomsController.dispose();
+    _symptomController.dispose();
     super.dispose();
   }
 
@@ -49,22 +60,9 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
       if (!mounted) return;
       final user = next.value;
       if (user != null) {
-        final formatted = _formatSymptoms(user.symptoms).trim();
-        _symptomsController.text = formatted;
-        _initialSymptoms = formatted;
-        _hasSetInitialSymptoms = true;
+        _initializeSymptoms(user.symptoms);
       }
     });
-
-    final userAsync = ref.watch(usersProvider);
-    final currUser = userAsync.value;
-
-    if (!_hasSetInitialSymptoms && currUser != null) {
-      final formatted = _formatSymptoms(currUser.symptoms).trim();
-      _symptomsController.text = formatted;
-      _initialSymptoms = formatted;
-      _hasSetInitialSymptoms = true;
-    }
 
     return Scaffold(
       body: Padding(
@@ -77,67 +75,41 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
             ),
             const SizedBox(height: 10),
             const Text(
-              'List the symptoms you want to analyze, separate by commas.',
+              'These symptoms will be used in ingredient analysis when you scan or add a food.',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: _symptomsController,
-              maxLines: null,
-              minLines: 3,
-              decoration: const InputDecoration(
-                labelText: 'Symptoms',
-                alignLabelWithHint: true,
-                border: OutlineInputBorder(),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                hintText: 'Enter symptoms separated by commas...',
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _symptomController,
+                    decoration: const InputDecoration(
+                      labelText: 'Symptom',
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter a symptom',
+                    ),
+                    onSubmitted: (_) => _addSymptom(),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _addSymptom,
+                  child: const Text('Add'),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
-            if (_hasChanges)
-              ElevatedButton(
-                onPressed: _isSaving
-                    ? null
-                    : () async {
-                        FocusScope.of(context).unfocus();
-
-                        final symptomsText = _symptomsController.text.trim();
-                        setState(() => _isSaving = true);
-
-                        try {
-                          await updateUser(updatedData: {
-                            'symptoms': symptomsText
-                                .split(',')
-                                .map((s) => s.trim())
-                                .where((s) => s.isNotEmpty)
-                                .toList(),
-                          });
-
-                          if (!mounted) return;
-
-                          setState(() {
-                            _initialSymptoms = symptomsText;
-                            _hasChanges = false;
-                            _isSaving = false;
-                          });
-                          if (!mounted) return;
-
-                          setState(() => _isSaving = false);
-                        } catch (e) {
-                          if (!context.mounted) return;
-
-                          setState(() => _isSaving = false);
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    'Failed to save symptoms, please try again!')),
-                          );
-                        }
-                      },
-                child: const Text('Save'),
-              ),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 4.0,
+              children: _symptoms
+                  .map((symptom) => Chip(
+                        label: Text(symptom),
+                        onDeleted: () => _removeSymptom(symptom),
+                      ))
+                  .toList(),
+            ),
           ],
         ),
       ),
