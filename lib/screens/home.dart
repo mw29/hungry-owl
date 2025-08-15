@@ -5,7 +5,7 @@ import 'package:hungryowl/providers/user_state.dart';
 import 'package:hungryowl/screens/food_data.dart';
 import 'package:hungryowl/screens/manual_entry.dart';
 import 'package:hungryowl/screens/profile.dart';
-import 'package:hungryowl/screens/symptom_settings.dart';
+import 'package:hungryowl/screens/settings.dart';
 import 'package:hungryowl/screens/onboarding/welcome.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -125,7 +125,7 @@ class HomePageState extends ConsumerState<HomePage>
         _hasPermission
             ? _buildCameraPreview()
             : Center(child: _buildPermissionUI()),
-        const SymptomSettings(),
+        const Settings(),
       ];
 
   Widget _buildPermissionUI() {
@@ -314,20 +314,7 @@ class HomePageState extends ConsumerState<HomePage>
     });
     return Scaffold(
       appBar: AppBar(
-        title: const Text("HungryOwl"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
-                ),
-              );
-            },
-          ),
-        ],
+        title: const Text("🦉 HungryOwl"),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

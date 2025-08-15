@@ -43,6 +43,7 @@ class ManualEntryScreenState extends State<ManualEntryScreen> {
             if (_showButton)
               ElevatedButton(
                 onPressed: () {
+                  FocusScope.of(context).unfocus();
                   Navigator.push(
                     context,
                     MaterialPageRoute(

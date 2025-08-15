@@ -38,7 +38,7 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
       });
       updateUser(updatedData: {'symptoms': newSymptoms});
     }
-        FocusScope.of(context).unfocus();
+    FocusScope.of(context).unfocus();
   }
 
   void _removeSymptom(String symptom) {
@@ -64,8 +64,10 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
         _initializeSymptoms(user.symptoms);
       }
     });
-
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Symptoms'),
+      ),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
