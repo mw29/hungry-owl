@@ -7,6 +7,7 @@ import 'package:hungryowl/screens/manual_entry.dart';
 import 'package:hungryowl/screens/profile.dart';
 import 'package:hungryowl/screens/settings.dart';
 import 'package:hungryowl/screens/onboarding/welcome.dart';
+import 'package:hungryowl/services/utils.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -102,11 +103,14 @@ class HomePageState extends ConsumerState<HomePage>
       return;
     }
     try {
+      print("Taking Picture: ");
       final XFile file = await _controller!.takePicture();
+      final imageBytes = await imagePathToBytes(file.path);
+      print("Took Picture: ${file.path}");
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => FoodData(imagePath: file.path),
+          builder: (context) => FoodData(imageBytes: imageBytes),
         ),
       );
     } catch (e) {
@@ -279,7 +283,7 @@ class HomePageState extends ConsumerState<HomePage>
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "Take a picture of your food.",
+                    "Take a picture of your food or an ingredient list.",
                     style: TextStyle(
                       color: Colors.white.withAlpha(100),
                       fontSize: 14,

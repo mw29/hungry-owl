@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hungryowl/models/users.dart';
@@ -10,12 +12,12 @@ import 'package:hungryowl/widgets/food_data/risk_score_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FoodData extends ConsumerStatefulWidget {
-  final String? imagePath;
+  final Uint8List? imageBytes;
   final String? foodName;
 
   const FoodData({
     super.key,
-    this.imagePath,
+    this.imageBytes,
     this.foodName,
   });
 
@@ -30,34 +32,25 @@ class _FoodData extends ConsumerState<FoodData> {
   @override
   void initState() {
     super.initState();
-    _foodData = _initFoodData();
+    _foodData = _identifyRiskAndRelation();
   }
 
-  Future<FoodSymptomInfo> _initFoodData() async {
-    try {
-      final name = widget.foodName ?? await _identifyFood();
-      return await _identifyRiskAndRelation(name);
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<String> _identifyFood() async {
+  //   print('image path: ${widget.imagePath}');
+  //   // final result = await generateFoodContent(widget.imagePath!);
 
-  Future<String> _identifyFood() async {
-    print('image path: ${widget.imagePath}');
-    final result = await generateFoodContent(widget.imagePath!);
+  //   // if (result.toLowerCase() == 'unknown' || result.toLowerCase() == '') {
+  //   //   throw Exception('Unable to identify the food.');
+  //   // }
 
-    if (result.toLowerCase() == 'unknown' || result.toLowerCase() == '') {
-      throw Exception('Unable to identify the food.');
-    }
+  //   return widget.imagePath!;
+  // }
 
-    return result;
-  }
-
-  Future<FoodSymptomInfo> _identifyRiskAndRelation(String foodName) async {
+  Future<FoodSymptomInfo> _identifyRiskAndRelation() async {
     final user = ref.read(usersProvider).value;
     final symptomList = user?.symptoms ?? [];
-    final response =
-        await generateAnalysisContent(foodName, symptomList.join(', '));
+    final response = await generateAnalysisContent(
+        widget.foodName, widget.imageBytes, symptomList.join(', '));
     return response;
   }
 
