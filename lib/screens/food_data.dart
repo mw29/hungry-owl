@@ -285,16 +285,18 @@ class _FoodData extends ConsumerState<FoodData> {
                         height: 8,
                       ),
                       Text(foodData.overview),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      Text(
-                        "Relevant Ingredients",
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                      IngredientsListView(
-                        ingredients: foodData.relevantIngredients,
-                      )
+                      if (foodData.relevantIngredients.isNotEmpty) ...[
+                        SizedBox(
+                          height: 12,
+                        ),
+                        Text(
+                          "Relevant Ingredients",
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        IngredientsListView(
+                          ingredients: foodData.relevantIngredients,
+                        )
+                      ]
                     ],
                   ),
                 ),
