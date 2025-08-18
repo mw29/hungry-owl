@@ -97,7 +97,7 @@ Your task is to:
 2. Exclude: allergies, rare or anecdotal associations, and any compound that requires phrasing like "in sensitive individuals" or "in rare cases".
 3. For each relevant compound:
    - Assign a risk score (1–10) **for each symptom**, based only on known, direct physiological or chemical links.
-   - Provide concise reasoning for that score, framed for individuals with a prior history of the symptom (not the general population).
+   - Provide concise reasoning in the information field for that score **for each symptom**, framed for individuals with a prior history of the symptom (not the general population), 1-3 short bullet points.
 4. If no compounds are relevant, return an empty list for `relevantCompounds` and set the `overallRiskScore` to 1 with the explanation: 
    "This food does not contain any known compounds linked to the listed symptoms."
 5. Assign an overall risk score (1–10) to the food as a whole with a brief explanation of its likely impact on individuals with the listed symptoms.
