@@ -4,9 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hungryowl/providers/user_state.dart';
 import 'package:hungryowl/screens/food_data.dart';
 import 'package:hungryowl/screens/manual_entry.dart';
-import 'package:hungryowl/screens/profile.dart';
+import 'package:hungryowl/screens/onboarding_screen.dart';
 import 'package:hungryowl/screens/settings.dart';
-import 'package:hungryowl/screens/onboarding/welcome.dart';
 import 'package:hungryowl/services/utils.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -312,7 +311,7 @@ class HomePageState extends ConsumerState<HomePage>
       final user = next.user;
       if (user != null && user.onboarded == false) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
         );
       }
     });

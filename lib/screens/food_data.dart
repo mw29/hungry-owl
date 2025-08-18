@@ -35,17 +35,6 @@ class _FoodData extends ConsumerState<FoodData> {
     _foodData = _identifyRiskAndRelation();
   }
 
-  // Future<String> _identifyFood() async {
-  //   print('image path: ${widget.imagePath}');
-  //   // final result = await generateFoodContent(widget.imagePath!);
-
-  //   // if (result.toLowerCase() == 'unknown' || result.toLowerCase() == '') {
-  //   //   throw Exception('Unable to identify the food.');
-  //   // }
-
-  //   return widget.imagePath!;
-  // }
-
   Future<FoodSymptomInfo> _identifyRiskAndRelation() async {
     final user = ref.read(usersProvider).value;
     final symptomList = user?.symptoms ?? [];
