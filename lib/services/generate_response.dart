@@ -75,7 +75,8 @@ Future<FoodSymptomInfo> generateAnalysisContent(
   );
   final message = Content('user', [
     TextPart(
-        'You are a symptom/ingredient analyzer. You will be given a food and a list of symptoms. You will dissect the food into ingredients and for each ingredient give a risk score (how likely the ingredient is to cause the symptom for individuals with a history of the symptom) for each symptom from 1-10 and explain why you gave it that score as 1-3 short bullet points in the information field. Through out any ingredients that could not plausibly cause the symptoms, no antidotal evidence, hypotheticals, or indirect links. Assign one single emoji where asked. Food: $foodName, Symptoms: $symptomList'),
+        'You are a food–symptom component analyzer. You will be given the name of a food and a list of symptoms. Food: $foodName, Symptoms: $symptomList. Your task is to help individuals who occasionally experience any of these symptoms assess the short term potential risk of eating the food before they consume it. This is not a diagnostic tool for explaining symptoms after the fact. Break the food into its nutrients, phytochemicals, bioactive compounds, and naturally occurring amines or acids (e.g., tyramine, histamine, etc). Include only components that have a well-documented and clinically significant link to at least one of the listed symptoms. Disregard the possibility of allergies and disregard compounds if you have to preface the your reasoning with "In rare cases, ..." etc or contains "in sensitive individuals". Exclude associations that are rare, anecdotal, or only relevant to a very small subset of the population. If the food has no nutrients, phytochemicals, or bioactive compounds with clinically significant links to the listed symptoms, return an empty list for relevantCompounds and set the overall risk score to 1 with the explanation: \"This food does not contain any known compounds linked to the listed symptoms\" For each included compound: Assign a risk score (1–10) for each symptom, based only on known, direct physiological or chemical links. Provide concise reasoning explaining the evidence behind that score. Keep the explanation framed in terms of risk to people with a prior history of that symptom, not the general population. Finally, assign an overall risk score (1–10) to the food as a whole, with a brief explanation of how strongly it is likely to impact individuals with those symptoms. ENGLISH ONLY!!'),
+    // 'You are a symptom/ingredient analyzer. You will be given a food and a list of symptoms. You will dissect the food into ingredients and for each ingredient give a risk score (how likely the ingredient is to cause the symptom for individuals with a history of the symptom) for each symptom from 1-10 and explain why you gave it that score as 1-3 short bullet points in the information field. Through out any ingredients that could not plausibly cause the symptoms, no antidotal evidence, hypotheticals, or indirect links. Assign one single emoji where asked. Food: $foodName, Symptoms: $symptomList'),
     TextPart('INSERT_INPUT_HERE'),
   ]);
 
@@ -91,7 +92,8 @@ Future<FoodSymptomInfo> generateAnalysisContent(
 
 final foodNameJsonSchema = Schema.object(properties: {
   'foodName': Schema.string(
-      description: 'Most accurate name for the food shown in the picture or unknown if unidentifiable'),
+      description:
+          'Most accurate name for the food shown in the picture or unknown if unidentifiable'),
 });
 
 Future<String> generateFoodContent(String path) async {
