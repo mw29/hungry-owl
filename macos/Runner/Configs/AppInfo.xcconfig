@@ -8,7 +8,7 @@
 PRODUCT_NAME = hungryowl
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.rootcause.scanApp
+PRODUCT_BUNDLE_IDENTIFIER = com.rootcause.HungryOwl
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.rootcause. All rights reserved.
