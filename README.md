@@ -32,9 +32,14 @@ HungryOwl runs entirely on your device. We never collect, store, or sell your da
 - ✅ iOS
 - ✅ Android
 
+
+## 💬 Contributions
+
+HungryOwl is not accepting any contributions. If you find a bug and would like to create an issue, please feel free to do so.
+
 ## 📄 License
 
-This project is open source. Please see the [LICENSE](LICENSE) file for details.
+This project is open source. Please see the LICENSE file for details.
 
 ---
 
