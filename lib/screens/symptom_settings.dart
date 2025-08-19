@@ -29,6 +29,14 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
   }
 
   void _updateSymptoms(List<String> newSymptoms) {
+    if (newSymptoms.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("You must have at least one symptom."),
+        ),
+      );
+      return;
+    }
     setState(() {
       _symptoms = newSymptoms;
     });

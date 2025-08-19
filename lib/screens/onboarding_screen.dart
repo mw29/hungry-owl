@@ -75,10 +75,6 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: const [
-                // Text(
-                //   '🌡️ Define your symptoms',
-                //   textAlign: TextAlign.center,
-                // ),
                 SizedBox(
                   height: 10,
                 ),
@@ -149,6 +145,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     _symptoms = newSymptoms;
                   });
                 },
+                isOnboarding: true,
               ),
             ),
             const SizedBox(height: 20),
