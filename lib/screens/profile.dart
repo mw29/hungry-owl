@@ -27,6 +27,11 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
+            const Text(
+              "We don't collect any data, all data is stored locally. By deleting your data, you are deleting your symptoms from your personal device",
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -38,7 +43,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                       return AlertDialog(
                         title: const Text('Delete Data?'),
                         content: const Text(
-                            'This action is irreversible and will permanently delete all your data.'),
+                            'This action is irreversible and will permanently delete all your symptom data.'),
                         actionsAlignment: MainAxisAlignment.center,
                         actions: <Widget>[
                           ElevatedButton(
@@ -66,6 +71,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                   );
                 },
                 child: const Text("Delete Data")),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
