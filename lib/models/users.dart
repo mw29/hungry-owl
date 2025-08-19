@@ -57,7 +57,7 @@ Future<Map<String, dynamic>> createUser() async {
       deletedAt: null,
       anonId: getAnonId(uid),
       version: DateTime.now().millisecondsSinceEpoch,
-      symptoms: ["extreme hunger"].toList(),
+      symptoms: [],
       onboarded: false,
     );
     final mapUser = userData.toMap();
