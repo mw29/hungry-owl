@@ -50,11 +50,11 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              "🦉",
-              style: TextStyle(fontSize: 50),
-              textAlign: TextAlign.center,
+            Image.asset(
+              'assets/owl.png',
+              height: 100,
             ),
+            const SizedBox(height: 20),
             Text(
               'Welcome to\nHungryOwl',
               style: textTheme.headlineMedium?.copyWith(
