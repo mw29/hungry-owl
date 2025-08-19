@@ -40,3 +40,4 @@ flutter:
   assets:
     - .env
     - assets/owl.png
+    - assets/brown_owl.png

@@ -317,7 +317,16 @@ class HomePageState extends ConsumerState<HomePage>
     });
     return Scaffold(
       appBar: AppBar(
-        title: const Text("🦉 HungryOwl"),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/brown_owl.png',
+              height: 30,
+            ),
+            const Text("HungryOwl"),
+          ],
+        ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
