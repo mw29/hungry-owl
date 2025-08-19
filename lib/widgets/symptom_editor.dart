@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class SymptomEditor extends StatefulWidget {
   final List<String> initialSymptoms;
   final Function(List<String>) onSymptomsChanged;
+  final bool isOnboarding;
 
   const SymptomEditor({
     super.key,
     required this.initialSymptoms,
     required this.onSymptomsChanged,
+    this.isOnboarding = false,
   });
 
   @override

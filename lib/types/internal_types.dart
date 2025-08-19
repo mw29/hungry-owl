@@ -34,6 +34,7 @@ class User extends Document {
   final int version;
   final List<String> symptoms;
   final bool onboarded;
+  final bool leftReview;
 
   User({
     required super.id,
@@ -44,6 +45,7 @@ class User extends Document {
     required this.version,
     required this.symptoms,
     required this.onboarded,
+    required this.leftReview,
   });
 
   Map<String, dynamic> toMap() {
@@ -56,6 +58,7 @@ class User extends Document {
       'version': version,
       'symptoms': symptoms,
       'onboarded': onboarded,
+      'leftReview': leftReview,
     };
   }
 }
