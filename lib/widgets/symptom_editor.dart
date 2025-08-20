@@ -79,6 +79,9 @@ class SymptomEditorState extends State<SymptomEditor> {
             ),
           ],
         ),
+        const SizedBox(height: 5,),
+        Text(
+            "You can also add conditions and diseases (IBS, Celiac Disease, Migraines, etc.)"),
         const SizedBox(height: 20),
         Wrap(
           spacing: 8.0,
@@ -88,8 +91,8 @@ class SymptomEditorState extends State<SymptomEditor> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10, horizontal: 15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
