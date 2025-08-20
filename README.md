@@ -1,8 +1,17 @@
-# HungryOwl 🦉
+<p align="center">
+  <img src="assets/owl.png" width="200">
+</p>
+
+# HungryOwl
 
 **Your personal guide to symptom-free eating!**
 
 Prevent food-related symptoms with HungryOwl — a privacy-first mobile app that helps you identify potential trigger ingredients before you eat.
+
+<p align="center">
+  <a href="https://apps.apple.com/us/app/hungryowl/id6751246948"><img src="assets/app_store_badge.svg" alt="Download on the App Store" height="50"></a> 
+  <!-- <a href="https://apps.apple.com/us/app/hungryowl/id6751246948"><img src="assets/google_play_badge.png" alt="Download on the App Store" height="40"></a>  -->
+</p>
 
 ## ✨ Features
 
@@ -38,4 +47,4 @@ This project is open source. Please see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Made with ❤️ for people who want to eat without worry******
+**Made with ❤️ for people who want to eat without worry**
