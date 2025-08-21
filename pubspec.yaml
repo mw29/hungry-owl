@@ -28,6 +28,7 @@ dependencies:
   url_launcher: ^6.3.2
   in_app_review: ^2.0.10
   flutter_launcher_icons: ^0.14.4
+  confetti: ^0.8.0
 
 dev_dependencies:
   flutter_test:
@@ -41,3 +42,4 @@ flutter:
     - .env
     - assets/owl.png
     - assets/brown_owl.png
+    - assets/me.png

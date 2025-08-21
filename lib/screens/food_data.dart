@@ -2,7 +2,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hungryowl/models/users.dart';
+import 'package:hungryowl/screens/home.dart';
 import 'package:hungryowl/screens/manual_entry.dart';
+import 'package:hungryowl/screens/review.dart';
 import 'package:hungryowl/services/generate_response.dart';
 import 'package:hungryowl/services/utils.dart';
 import 'package:hungryowl/types/internal_types.dart';
@@ -50,6 +52,7 @@ class _FoodData extends ConsumerState<FoodData> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.read(usersProvider).value;
     return FutureBuilder<FoodSymptomInfo>(
         future: _foodData,
         builder: (context, snapshot) {
@@ -141,7 +144,16 @@ class _FoodData extends ConsumerState<FoodData> {
                     icon: const Icon(Icons.close),
                     onPressed: () {
                       FocusScope.of(context).unfocus();
-                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      final shouldShowReview =
+                          !user!.leftReview && user.scanCount == 2;
+                      final destination = shouldShowReview
+                          ? const ReviewPage()
+                          : const HomePage();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => destination),
+                        (_) => false,
+                      );
                     },
                   ),
                 ],
