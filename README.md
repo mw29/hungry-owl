@@ -10,7 +10,7 @@ Prevent food-related symptoms with HungryOwl — a privacy-first mobile app that
 
 <p align="center">
   <a href="https://apps.apple.com/us/app/hungryowl/id6751246948"><img src="assets/app_store_badge.svg" alt="Download on the App Store" height="50"></a> 
-  <!-- <a href="https://apps.apple.com/us/app/hungryowl/id6751246948"><img src="assets/google_play_badge.png" alt="Download on the App Store" height="40"></a>  -->
+  <a href="https://play.google.com/store/apps/details?id=com.rootcause.hungryowl&pcampaignid=web_share"><img src="assets/google_play_badge.png" alt="Download on the App Store" height="50"></a> 
 </p>
 
 ## ✨ Features
@@ -40,7 +40,6 @@ HungryOwl runs entirely on your device. We never collect, store, or sell your da
 
 - ✅ iOS
 - ✅ Android
-
 
 ## 💬 Contributions
 
