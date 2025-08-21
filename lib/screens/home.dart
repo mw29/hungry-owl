@@ -1,12 +1,14 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hungryowl/models/users.dart';
 import 'package:hungryowl/providers/user_state.dart';
 import 'package:hungryowl/screens/food_data.dart';
 import 'package:hungryowl/screens/manual_entry.dart';
 import 'package:hungryowl/screens/onboarding_screen.dart';
 import 'package:hungryowl/screens/settings.dart';
 import 'package:hungryowl/services/utils.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -307,12 +309,22 @@ class HomePageState extends ConsumerState<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(userProvider, (previous, next) {
+    ref.listen(userProvider, (previous, next) async {
       final user = next.user;
-      if (user != null && user.onboarded == false) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-        );
+      if (user != null) {
+        if (user.onboarded == false) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+          );
+        }
+        print("Scan Count: ${user.scanCount}");
+        if (user.scanCount == 3 && user.leftReview != true) {
+          final InAppReview inAppReview = InAppReview.instance;
+          if (await inAppReview.isAvailable()) {
+            inAppReview.requestReview();
+            await updateUser(updatedData: {'leftReview': true});
+          }
+        }
       }
     });
     return Scaffold(

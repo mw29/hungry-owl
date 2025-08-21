@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hungryowl/models/users.dart';
@@ -40,6 +39,12 @@ class _FoodData extends ConsumerState<FoodData> {
     final symptomList = user?.symptoms ?? [];
     final response = await generateAnalysisContent(
         widget.foodName, widget.imageBytes, symptomList.join(', '));
+
+    if (user != null) {
+      final newScanCount = user.scanCount + 1;
+      await updateUser(updatedData: {"scanCount": newScanCount});
+    }
+
     return response;
   }
 
@@ -126,7 +131,6 @@ class _FoodData extends ConsumerState<FoodData> {
             );
           } else if (snapshot.hasData) {
             final foodData = snapshot.data!;
-
             return Scaffold(
               appBar: AppBar(
                 automaticallyImplyLeading: false,

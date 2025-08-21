@@ -42,6 +42,7 @@ User mapToUser(Map data) {
     symptoms: List<String>.from(data['symptoms']),
     onboarded: data['onboarded'],
     leftReview: data['leftReview'],
+    scanCount: data['scanCount'],
   );
 }
 
@@ -61,6 +62,7 @@ Future<Map<String, dynamic>> createUser() async {
       symptoms: [],
       onboarded: false,
       leftReview: false,
+      scanCount: 0,
     );
     final mapUser = userData.toMap();
     await userStore.record('user').put(Db().db, mapUser);
