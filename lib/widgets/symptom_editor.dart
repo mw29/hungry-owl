@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hungryowl/services/check_symptom_validity.dart';
 
 class SymptomEditor extends StatefulWidget {
   final List<String> initialSymptoms;
@@ -19,6 +20,7 @@ class SymptomEditor extends StatefulWidget {
 class SymptomEditorState extends State<SymptomEditor> {
   final _symptomController = TextEditingController();
   late List<String> _symptoms;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -26,9 +28,23 @@ class SymptomEditorState extends State<SymptomEditor> {
     _symptoms = widget.initialSymptoms;
   }
 
-  void _addSymptom() {
+  Future<void> _addSymptom() async {
     final symptom = _symptomController.text.trim();
     if (symptom.isNotEmpty && !_symptoms.contains(symptom)) {
+      // setState(() {
+      //   _isLoading = true;
+      // });
+      // final isValid = await checkSymptomValidity(symptom);
+      // if (!mounted) return;
+      // setState(() {
+      //   _isLoading = false;
+      // });
+      // if (!isValid) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('Invalid symptom')),
+      //   );
+      //   return;
+      // }
       final newSymptoms = [..._symptoms, symptom];
       setState(() {
         _symptoms = newSymptoms;
@@ -74,12 +90,22 @@ class SymptomEditorState extends State<SymptomEditor> {
             ),
             const SizedBox(width: 10),
             ElevatedButton(
-              onPressed: _addSymptom,
-              child: const Text('Add'),
+              onPressed: _isLoading ? null : _addSymptom,
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text('Add'),
             ),
           ],
         ),
-        const SizedBox(height: 5,),
+        const SizedBox(
+          height: 5,
+        ),
         Text(
             "You can also add conditions and diseases (IBS, Celiac Disease, Migraines, etc.)"),
         const SizedBox(height: 20),
