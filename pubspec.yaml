@@ -2,7 +2,7 @@ name: hungryowl
 description: "A new Flutter project."
 publish_to: "none"
 
-version: 2025.08.20+3
+version: 2025.08.22+4
 
 environment:
   sdk: ">=2.19.0 <3.0.0"
