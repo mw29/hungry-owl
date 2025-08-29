@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hungryowl/models/users.dart';
 import 'package:hungryowl/screens/home.dart';
+import 'package:hungryowl/services/analytics.dart';
 import 'package:hungryowl/widgets/symptom_editor.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -18,6 +19,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
+    Analytics.track(AnalyticsEvent.onboardingStarted);
     final user = ref.read(usersProvider).value;
     if (user != null) {
       setState(() {
@@ -199,6 +201,9 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               onPressed: () async {
                 final user = ref.read(usersProvider).value;
                 if (user != null) {
+                  Analytics.track(AnalyticsEvent.onboardingCompleted, {
+                    'symptoms_count': _symptoms.length,
+                  });
                   await updateUser(
                     updatedData: {
                       'onboarded': true,

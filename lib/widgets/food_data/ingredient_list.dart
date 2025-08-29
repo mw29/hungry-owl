@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hungryowl/services/analytics.dart';
 import 'package:hungryowl/services/utils.dart';
 import 'package:hungryowl/types/internal_types.dart';
 import 'package:hungryowl/widgets/food_data/symptom_risk_card.dart';
@@ -52,6 +53,9 @@ class _IngredientCardState extends State<IngredientCard>
     setState(() {
       _isExpanded = !_isExpanded;
       if (_isExpanded) {
+        Analytics.track(AnalyticsEvent.ingredientListExpanded, {
+          'ingredient_name': widget.ingredient.ingredientName,
+        });
         _animationController.forward();
       } else {
         _animationController.reverse();

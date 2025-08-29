@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hungryowl/models/users.dart';
+import 'package:hungryowl/services/analytics.dart';
 import 'package:hungryowl/widgets/symptom_editor.dart';
 
 class SymptomSettings extends ConsumerStatefulWidget {
@@ -39,6 +40,9 @@ class _SymptomSettings extends ConsumerState<SymptomSettings> {
     }
     setState(() {
       _symptoms = newSymptoms;
+    });
+    Analytics.track(AnalyticsEvent.symptomsUpdated, {
+      'symptoms_count': newSymptoms.length,
     });
     updateUser(updatedData: {'symptoms': newSymptoms});
   }

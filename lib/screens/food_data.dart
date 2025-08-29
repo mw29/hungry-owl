@@ -5,6 +5,7 @@ import 'package:hungryowl/models/users.dart';
 import 'package:hungryowl/screens/home.dart';
 import 'package:hungryowl/screens/manual_entry.dart';
 import 'package:hungryowl/screens/review.dart';
+import 'package:hungryowl/services/analytics.dart';
 import 'package:hungryowl/services/generate_response.dart';
 import 'package:hungryowl/services/utils.dart';
 import 'package:hungryowl/types/internal_types.dart';
@@ -47,6 +48,10 @@ class _FoodData extends ConsumerState<FoodData> {
       await updateUser(updatedData: {"scanCount": newScanCount});
     }
 
+    Analytics.track(AnalyticsEvent.foodAnalysisCompleted, {
+      'food_name': response.foodName,
+      'risk_score': response.overallRiskScore,
+    });
     return response;
   }
 
@@ -64,6 +69,9 @@ class _FoodData extends ConsumerState<FoodData> {
               body: const Center(child: CircularProgressIndicator()),
             );
           } else if (snapshot.hasError) {
+            Analytics.track(AnalyticsEvent.foodAnalysisFailed, {
+              'error': snapshot.error.toString(),
+            });
             return Scaffold(
               appBar: AppBar(
                 automaticallyImplyLeading: false,
@@ -117,6 +125,7 @@ class _FoodData extends ConsumerState<FoodData> {
                       const SizedBox(height: 12),
                       OutlinedButton.icon(
                         onPressed: () {
+                          Analytics.track(AnalyticsEvent.manualEntryUsed);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

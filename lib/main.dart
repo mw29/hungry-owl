@@ -1,9 +1,11 @@
+import 'package:beaverlog_flutter/beaverlog_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hungryowl/providers/user_state.dart';
 import 'package:hungryowl/screens/home.dart';
+import 'package:hungryowl/secrets/secrets.dart';
 import 'package:hungryowl/services/db.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -14,6 +16,11 @@ void main() async {
   await Db().initialize();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+  BeaverLog().init(
+    appId: beaverlogAppId,
+    publicKey: beaverlogPublicKey,
+    host: 'https://beaverlog.deno.dev',
   );
   runApp(const ProviderScope(child: MyApp()));
 }

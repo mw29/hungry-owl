@@ -6,6 +6,7 @@ import 'package:hungryowl/screens/food_data.dart';
 import 'package:hungryowl/screens/manual_entry.dart';
 import 'package:hungryowl/screens/onboarding_screen.dart';
 import 'package:hungryowl/screens/settings.dart';
+import 'package:hungryowl/services/analytics.dart';
 import 'package:hungryowl/services/utils.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -102,10 +103,13 @@ class HomePageState extends ConsumerState<HomePage>
       return;
     }
     try {
+      Analytics.track(AnalyticsEvent.scanStarted);
       print("Taking Picture: ");
       final XFile file = await _controller!.takePicture();
       final imageBytes = await imagePathToBytes(file.path);
       print("Took Picture: ${file.path}");
+      Analytics.track(AnalyticsEvent.takePicture);
+      Analytics.track(AnalyticsEvent.scanCompleted);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -113,6 +117,7 @@ class HomePageState extends ConsumerState<HomePage>
         ),
       );
     } catch (e) {
+      Analytics.track(AnalyticsEvent.scanFailed, {'error': e.toString()});
       debugPrint("Error taking picture: $e");
     }
   }
@@ -178,6 +183,7 @@ class HomePageState extends ConsumerState<HomePage>
               textStyle: const TextStyle(fontSize: 16),
             ),
             onPressed: () {
+              Analytics.track(AnalyticsEvent.manualEntryUsed);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -235,6 +241,7 @@ class HomePageState extends ConsumerState<HomePage>
                     child: IconButton(
                       icon: const Icon(Icons.edit, color: Colors.white),
                       onPressed: () {
+                        Analytics.track(AnalyticsEvent.manualEntryUsed);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

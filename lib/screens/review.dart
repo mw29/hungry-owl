@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hungryowl/models/users.dart';
 import 'package:hungryowl/screens/home.dart';
+import 'package:hungryowl/services/analytics.dart';
 import 'package:in_app_review/in_app_review.dart';
 
 class ReviewPage extends ConsumerStatefulWidget {
@@ -20,6 +21,7 @@ class ReviewPageState extends ConsumerState<ReviewPage> {
     super.initState();
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 5));
+    Analytics.track(AnalyticsEvent.reviewPromptShown);
   }
 
   @override
@@ -180,6 +182,7 @@ class ReviewPageState extends ConsumerState<ReviewPage> {
                               ),
                             ),
                             onPressed: () async {
+                              Analytics.track(AnalyticsEvent.reviewLeft);
                               final InAppReview inAppReview =
                                   InAppReview.instance;
                               if (await inAppReview.isAvailable()) {

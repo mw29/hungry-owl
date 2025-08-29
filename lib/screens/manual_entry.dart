@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hungryowl/screens/food_data.dart';
+import 'package:hungryowl/services/analytics.dart';
 
 class ManualEntryScreen extends StatefulWidget {
   const ManualEntryScreen({super.key});
@@ -43,6 +44,9 @@ class ManualEntryScreenState extends State<ManualEntryScreen> {
             if (_showButton)
               ElevatedButton(
                 onPressed: () {
+                  Analytics.track(AnalyticsEvent.manualEntry, {
+                    'food_name': _foodNameController.text,
+                  });
                   FocusScope.of(context).unfocus();
                   Navigator.push(
                     context,

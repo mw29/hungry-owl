@@ -29,6 +29,10 @@ dependencies:
   in_app_review: ^2.0.10
   flutter_launcher_icons: ^0.14.4
   confetti: ^0.8.0
+  beaverlog_flutter:
+    git: 
+      url: git@github.com:drg101/beaverlog_flutter.git
+      ref: 00bb47524f4d2a6852cd1ef6fb2da01decaa6444
 
 dev_dependencies:
   flutter_test:
