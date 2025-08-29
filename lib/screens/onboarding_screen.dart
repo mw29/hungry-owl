@@ -119,51 +119,61 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Widget _buildSymptomPage() {
     final textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'What symptoms do you experience?',
-              style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'These symptoms will be used to calculate risk scores and identify risky ingredients specific to you. You can edit this list any time.',
-              style: textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 30),
-            Expanded(
-              child: SymptomEditor(
-                initialSymptoms: _symptoms,
-                onSymptomsChanged: (newSymptoms) {
-                  setState(() {
-                    _symptoms = newSymptoms;
-                  });
-                },
-                isOnboarding: true,
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'What symptoms do you experience?',
+                style: textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 20),
-            if (_symptoms.isNotEmpty)
-              ElevatedButton(
-                onPressed: () {
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                },
-                child: const Text('Next'),
+              const SizedBox(height: 10),
+              Text(
+                'These symptoms will be used to calculate risk scores and identify risky ingredients specific to you. You can edit this list any time.',
+                style: textTheme.titleMedium,
+                textAlign: TextAlign.center,
               ),
-          ],
+              const SizedBox(height: 30),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: SymptomEditor(
+                    initialSymptoms: _symptoms,
+                    onSymptomsChanged: (newSymptoms) {
+                      setState(() {
+                        _symptoms = newSymptoms;
+                      });
+                    },
+                    isOnboarding: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+      bottomNavigationBar: _symptoms.isNotEmpty
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  child: const Text('Next'),
+                ),
+              ),
+            )
+          : null,
     );
   }
 
