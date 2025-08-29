@@ -153,16 +153,20 @@ class _FoodData extends ConsumerState<FoodData> {
                     icon: const Icon(Icons.close),
                     onPressed: () {
                       FocusScope.of(context).unfocus();
-                      final shouldShowReview =
-                          !user!.leftReview && user.scanCount == 2;
-                      final destination = shouldShowReview
-                          ? const ReviewPage()
-                          : const HomePage();
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => destination),
-                        (_) => false,
-                      );
+                      if (user != null) {
+                        final shouldShowReview =
+                            !user.leftReview && user.scanCount == 2;
+                        final destination = shouldShowReview
+                            ? const ReviewPage()
+                            : const HomePage();
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => destination),
+                          (_) => false,
+                        );
+                      } else {
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                      }
                     },
                   ),
                 ],
